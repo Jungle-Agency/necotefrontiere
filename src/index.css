@@ -1,0 +1,35 @@
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Montserrat", sans-serif;
+  --font-cursive: "Great Vibes", cursive;
+
+  --color-brand-blue: #123B7A;
+  --color-brand-red: #D52B1E;
+  --color-brand-cream: #FAF8F5;
+  --color-brand-lightblue: #DCEAF8;
+  --color-brand-gray: #E6E6E6;
+}
+
+/* Custom cursive style override for special touches */
+.text-cursive {
+  font-family: 'Great Vibes', cursive;
+}
+
+/* Custom animations referenced across the components */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes scale-up {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes spin-slow {
+  to { transform: rotate(360deg); }
+}
+
+.animate-fade-in { animation: fade-in 0.2s ease-out; }
+.animate-scale-up { animation: scale-up 0.2s ease-out; }
+.animate-spin-slow { animation: spin-slow 6s linear infinite; }
