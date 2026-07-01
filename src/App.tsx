@@ -1,6 +1,5 @@
-import { useState, useRef } from 'react';
+import { useRef, type ReactNode } from 'react';
 import {
-  PhoneCall,
   Check,
   Calendar,
   Mail,
@@ -15,9 +14,10 @@ import {
   ChevronRight
 } from 'lucide-react';
 import { motion } from 'motion/react';
+import { InlineWidget } from 'react-calendly';
 import { SERVICE_PACKAGES } from './data';
+import { CALENDLY_URL } from './config';
 import Header from './components/Header';
-import BookingFlow from './components/BookingFlow';
 import FAQ from './components/FAQ';
 import About from './components/About';
 
@@ -26,10 +26,18 @@ import About from './components/About';
 const HERO_IMAGE =
   'https://images.unsplash.com/photo-1757584666096-59deb41f1124?auto=format&fit=crop&q=80&w=2000';
 
-export default function App() {
-  const [activePackageId, setActivePackageId] = useState<string | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+// Petit intitulé « eyebrow » réutilisé au-dessus des titres de section
+function Eyebrow({ children, center = false }: { children: ReactNode; center?: boolean }) {
+  return (
+    <div className={`inline-flex items-center gap-2.5 text-[11px] font-extrabold uppercase tracking-[0.22em] text-brand-red ${center ? 'justify-center' : ''}`}>
+      <span className="w-6 h-px bg-brand-red/70" />
+      {children}
+      {center && <span className="w-6 h-px bg-brand-red/70" />}
+    </div>
+  );
+}
 
+export default function App() {
   // References for scrolling
   const accueilRef = useRef<HTMLDivElement>(null);
   const servicesRef = useRef<HTMLDivElement>(null);
@@ -50,49 +58,55 @@ export default function App() {
     }
   };
 
-  const openBooking = (pkgId: string) => {
-    setActivePackageId(pkgId);
-    setIsModalOpen(true);
-  };
+  const goToBooking = () => handleNavigate('calendly');
 
   return (
-    <div className="min-h-screen bg-brand-cream text-brand-blue font-sans selection:bg-brand-red/10 selection:text-brand-red">
+    <div className="min-h-screen bg-brand-cream text-brand-blue font-sans antialiased selection:bg-brand-red/10 selection:text-brand-red">
       {/* Header / Navbar */}
-      <Header
-        onBookClick={() => openBooking('decouverte')}
-        onNavigate={handleNavigate}
-      />
+      <Header onBookClick={goToBooking} onNavigate={handleNavigate} />
 
-      {/* Hero Section (Accueil) */}
+      {/* ============================ HERO ============================ */}
       <div
         ref={accueilRef}
-        className="relative min-h-[80vh] flex items-center overflow-hidden py-20 md:py-32 bg-cover bg-center bg-no-repeat bg-brand-lightblue"
+        id="accueil"
+        className="relative min-h-[85vh] md:min-h-[90vh] flex items-center overflow-hidden py-20 md:py-32 bg-cover bg-center bg-no-repeat bg-brand-lightblue grain"
         style={{ backgroundImage: `url(${HERO_IMAGE})` }}
       >
-        {/* Soft, professional brand color gradient overlay to guarantee perfect contrast and Swiss luxury atmosphere */}
-        <div className="absolute inset-0 bg-gradient-to-r from-brand-cream via-brand-cream/85 md:via-brand-cream/75 lg:via-brand-cream/45 to-transparent"></div>
+        {/* Voiles de couleur marque pour le contraste et l'atmosphère */}
+        <div className="absolute inset-0 bg-gradient-to-r from-brand-cream via-brand-cream/90 md:via-brand-cream/80 lg:via-brand-cream/55 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-brand-cream/85 via-transparent to-transparent" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="max-w-3xl space-y-6 md:space-y-8 text-left"
+            transition={{ duration: 0.8, ease: 'easeOut' }}
+            className="max-w-3xl space-y-6 md:space-y-7 text-left"
           >
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <Eyebrow>Accompagnement frontalier · FR / CH</Eyebrow>
+            </motion.div>
 
             <div className="space-y-4">
               <motion.h1
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
-                className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-none text-brand-blue"
+                transition={{ duration: 0.6, delay: 0.1, ease: 'easeOut' }}
+                className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-[-0.02em] leading-[1.02] sm:leading-[0.95] text-brand-blue text-balance"
               >
                 Votre alliée pour <br className="hidden sm:inline" />
                 réussir votre vie <br className="hidden sm:inline" />
-                <span className="text-brand-red underline decoration-brand-lightblue decoration-wavy">à Genève.</span>
+                <span className="relative inline-block text-brand-red">
+                  en Suisse.
+                  <span className="absolute left-0 -bottom-1 h-3 w-full bg-brand-red/15 rounded-sm -z-10" />
+                </span>
               </motion.h1>
 
-              {/* Brand signature cursive */}
+              {/* Signature cursive de marque */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -100,7 +114,8 @@ export default function App() {
                 className="pt-1"
               >
                 <p className="text-3xl sm:text-4xl text-brand-red font-cursive select-none">
-                  Née ici, les vrais conseils de frontière. <span className="text-brand-blue">❤️</span>
+                  Née ici, les vrais conseils de frontière.
+                  <span className="align-middle text-[0.55em] ml-1">♥</span>
                 </p>
               </motion.div>
             </div>
@@ -109,220 +124,247 @@ export default function App() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.4 }}
-              className="text-sm sm:text-base md:text-lg text-gray-700 max-w-2xl leading-relaxed font-semibold"
+              className="text-base md:text-lg text-gray-700 max-w-2xl leading-relaxed font-medium text-pretty"
             >
-              NCF est le service d’accompagnement de référence pour ceux qui souhaitent <strong>travailler en Suisse</strong>, devenir <strong>frontaliers</strong> ou s’installer sereinement en <strong>Haute-Savoie</strong> et dans le bassin genevois. Des conseils de terrain, concrets et sans intermédiaire.
+              NCF est le service d’accompagnement de référence pour toutes celles et ceux qui souhaitent <strong className="text-brand-blue">travailler en Suisse</strong>, devenir <strong className="text-brand-blue">frontaliers</strong> ou s’y installer sereinement. Que vous viviez en <strong className="text-brand-blue">Haute-Savoie</strong>, dans l’<strong className="text-brand-blue">Ain</strong>, à <strong className="text-brand-blue">Genève</strong>, dans le <strong className="text-brand-blue">canton de Vaud</strong> ou ailleurs le long de la frontière, nous vous apportons des conseils de terrain, concrets et sans intermédiaire.
             </motion.p>
 
-            {/* Action Buttons */}
+            {/* Boutons d'action */}
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.5 }}
-              className="flex flex-col sm:flex-row gap-4 pt-4"
+              className="flex flex-col sm:flex-row gap-3 pt-2"
             >
               <button
-                onClick={() => handleNavigate('services')}
-                className="bg-brand-blue hover:bg-brand-blue/90 text-white font-extrabold text-sm px-8 py-4.5 rounded-2xl shadow-xl hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                onClick={goToBooking}
+                className="group bg-brand-red hover:bg-brand-red text-white font-bold text-sm px-8 py-4 rounded-2xl shadow-red hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
-                Découvrir nos Services
-                <ArrowDown className="w-4 h-4 text-brand-red animate-bounce" />
+                <Calendar className="w-4 h-4" />
+                Prendre RDV gratuit (20 min)
               </button>
               <button
-                onClick={() => openBooking('decouverte')}
-                disabled
-                className="bg-brand-red text-white font-extrabold text-sm px-8 py-4.5 rounded-2xl shadow-lg shadow-brand-red/10 transition-all flex items-center justify-center gap-2 opacity-50 cursor-not-allowed"
+                onClick={() => handleNavigate('services')}
+                className="bg-white/70 backdrop-blur border border-brand-blue/15 text-brand-blue font-bold text-sm px-8 py-4 rounded-2xl shadow-soft hover:bg-white hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
-                <PhoneCall className="w-4 h-4" />
-                Appel gratuit (20 min)
+                Découvrir nos Services
+                <ArrowDown className="w-4 h-4 text-brand-red group-hover:translate-y-0.5 transition-transform" />
               </button>
+            </motion.div>
+
+            {/* Bandeau de réassurance */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.65 }}
+              className="flex flex-wrap items-center gap-x-5 gap-y-2 pt-3 text-xs font-semibold text-brand-blue/80"
+            >
+              {['RDV en ligne immédiat', 'Sans engagement', 'Conseils de terrain, sans intermédiaire'].map((t, i) => (
+                <span key={i} className="flex items-center gap-1.5">
+                  <Check className="w-3.5 h-3.5 text-brand-red stroke-[3]" />
+                  {t}
+                </span>
+              ))}
             </motion.div>
           </motion.div>
         </div>
       </div>
 
-      {/* Transition Banner */}
-      <div className="bg-brand-blue text-white py-6 overflow-hidden border-y border-brand-lightblue/20">
-        <div className="max-w-7xl mx-auto px-4 flex flex-wrap justify-around items-center gap-6 text-center text-xs md:text-sm font-bold tracking-wider uppercase">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="flex items-center gap-2"
-          >
-            <span className="text-brand-red text-lg">✦</span> Accompagnement sur-mesure
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="hidden sm:flex items-center gap-2"
-          >
-            <span className="text-brand-red text-lg font-cursive">✦</span> Zéro partenariat commercial caché
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="flex items-center gap-2"
-          >
-            <span className="text-brand-red text-lg">✦</span> Guides pratiques actualisés 2026
-          </motion.div>
+      {/* ============================ BANDEAU ============================ */}
+      <div className="bg-brand-blue text-white py-5 overflow-hidden border-y-2 border-brand-red/60">
+        <div className="max-w-7xl mx-auto px-4 flex flex-wrap justify-center md:justify-around items-center gap-x-8 gap-y-3 text-center text-xs md:text-sm font-bold tracking-wider uppercase">
+          {['Accompagnement sur-mesure', 'Zéro partenariat commercial caché', 'Guides pratiques actualisés 2026'].map((t, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: i * 0.1 }}
+              className="flex items-center gap-2.5"
+            >
+              <span className="text-brand-red text-lg leading-none">✦</span>
+              {t}
+            </motion.div>
+          ))}
         </div>
       </div>
 
-      {/* Services Section */}
-      <div ref={servicesRef} id="services" className="py-20 bg-white">
+      {/* ============================ SERVICES ============================ */}
+      <div ref={servicesRef} id="services" className="py-16 md:py-24 bg-white brand-glow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
           <motion.div
             initial={{ opacity: 0, y: 25 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
+            viewport={{ once: true, margin: '-100px' }}
             transition={{ duration: 0.6 }}
-            className="text-center space-y-4 max-w-3xl mx-auto mb-16"
+            className="text-center space-y-5 max-w-3xl mx-auto mb-10 md:mb-14"
           >
-            <h2 className="text-3xl md:text-4xl font-extrabold text-brand-blue tracking-tight font-sans">
+            <div className="flex justify-center"><Eyebrow center>Nos offres</Eyebrow></div>
+            <h2 className="text-4xl md:text-5xl font-black text-brand-blue tracking-[-0.02em] leading-[1.05] text-balance">
               Des offres adaptées à chaque étape de votre projet suisse
             </h2>
-            <p className="text-sm md:text-base text-gray-500">
-              Choisissez la formule qui correspond à vos besoins et réservez instantanément votre appel d’accompagnement en sélectionnant un créneau directement dans notre agenda Calendly.
+            <p className="text-base text-gray-600 leading-relaxed text-pretty">
+              Choisissez la formule qui correspond à vos besoins et prenez rendez-vous instantanément en sélectionnant un créneau directement dans notre agenda Calendly.
             </p>
           </motion.div>
 
-          {/* Packages Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch mb-16">
+          {/* Bloc découverte offert */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-50px' }}
+            transition={{ duration: 0.5 }}
+            className="relative overflow-hidden rounded-3xl mb-10 md:mb-14 bg-brand-cream border border-brand-lightblue shadow-soft"
+          >
+            {/* Filet rouge éditorial */}
+            <span className="absolute inset-y-0 left-0 w-1.5 bg-brand-red" />
+            <div className="p-8 md:p-10 md:pl-12 flex flex-col md:flex-row items-start md:items-center justify-between gap-7">
+              <div className="space-y-3 max-w-2xl">
+                <span className="inline-flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-[0.2em] text-brand-red">
+                  <Calendar className="w-3.5 h-3.5" />
+                  Gratuit · 20 min · Sans engagement
+                </span>
+                <h3 className="text-2xl md:text-3xl font-black tracking-tight leading-tight text-brand-blue text-balance">
+                  Commencez par un rendez-vous découverte offert
+                </h3>
+                <p className="text-sm md:text-base text-gray-600 leading-relaxed text-pretty">
+                  Faisons le point sur votre projet : diagnostic de votre situation, évaluation de votre éligibilité et définition des prochaines étapes. Le meilleur point de départ avant de choisir une offre.
+                </p>
+              </div>
+              <button
+                onClick={goToBooking}
+                className="shrink-0 bg-brand-red hover:bg-brand-red/90 text-white font-bold text-sm px-7 py-4 rounded-2xl shadow-red hover:-translate-y-0.5 transition-all flex items-center gap-2 cursor-pointer"
+              >
+                Prendre RDV gratuit
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+          </motion.div>
+
+          {/* Grille des offres */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
             {SERVICE_PACKAGES.map((pkg, idx) => {
               const isPopular = pkg.id === 'travail';
-              const isFree = pkg.price === 0;
-
               return (
                 <motion.div
                   key={pkg.id}
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-50px" }}
-                  transition={{ duration: 0.5, delay: idx * 0.1 }}
-                  whileHover={{ y: -8, scale: 1.01, transition: { duration: 0.2 } }}
-                  className={`rounded-3xl border p-6 md:p-8 flex flex-col justify-between relative cursor-default ${
+                  viewport={{ once: true, margin: '-50px' }}
+                  transition={{ duration: 0.5, delay: idx * 0.08 }}
+                  whileHover={{ y: -8, transition: { duration: 0.25 } }}
+                  className={`group relative rounded-3xl border p-7 md:p-8 flex flex-col bg-white transition-shadow duration-300 cursor-default ${
                     isPopular
-                      ? 'border-brand-blue bg-brand-lightblue/10 shadow-lg ring-2 ring-brand-blue/30 lg:scale-[1.03]'
-                      : 'border-brand-lightblue bg-brand-cream/20 hover:border-brand-blue/30 hover:bg-brand-cream/30 shadow-sm'
+                      ? 'border-brand-blue/25 shadow-soft-lg lg:-translate-y-3'
+                      : 'border-brand-lightblue shadow-soft hover:shadow-soft-lg'
                   }`}
                 >
+                  {/* Accent haut pour l'offre populaire */}
+                  {isPopular && (
+                    <span className="absolute inset-x-0 -top-px h-1.5 rounded-t-3xl bg-gradient-to-r from-brand-red to-brand-blue" />
+                  )}
                   {isPopular && pkg.badge && (
-                    <span className="absolute -top-3.5 left-6 text-[10px] font-black px-3.5 py-1.5 bg-brand-blue text-white rounded-full uppercase tracking-widest shadow-sm">
+                    <span className="absolute -top-3 left-7 text-[10px] font-black px-3 py-1.5 bg-brand-blue text-white rounded-full uppercase tracking-widest shadow-md">
                       {pkg.badge}
                     </span>
                   )}
 
-                  {/* Header info */}
-                  <div>
-                    <div className="flex justify-between items-center mb-4">
-                      <span className="text-xs font-bold text-brand-red flex items-center gap-1 uppercase tracking-wider">
-                        <Clock className="w-3.5 h-3.5 text-brand-red shrink-0" /> {pkg.duration}
-                      </span>
-                    </div>
+                  <div className="flex-1">
+                    <span className="inline-flex items-center gap-1.5 text-[11px] font-bold text-brand-red uppercase tracking-wider">
+                      <Clock className="w-3.5 h-3.5 shrink-0" /> {pkg.duration}
+                    </span>
 
-                    <h3 className="text-xl font-bold text-brand-blue mb-2 font-sans">{pkg.name}</h3>
-                    <p className="text-xs text-gray-500 leading-relaxed mb-6">
-                      {pkg.description}
-                    </p>
+                    <h3 className="mt-4 text-xl font-black text-brand-blue tracking-tight">{pkg.name}</h3>
+                    <p className="mt-2 text-xs text-gray-600 leading-relaxed">{pkg.description}</p>
 
-                    <div className="border-t border-brand-lightblue/50 pt-5 mb-6">
-                      <span className="text-xs font-bold text-gray-400 block uppercase mb-1">Tarif unique</span>
-                      <div className="flex items-baseline gap-1">
-                        <span className="text-3xl md:text-4xl font-black text-brand-blue">
-                          {isFree ? 'Gratuit' : `${pkg.price} €`}
-                        </span>
-                        {!isFree && <span className="text-xs text-gray-500 font-semibold">TTC</span>}
+                    <div className="mt-5 pt-5 border-t border-brand-lightblue/60">
+                      <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider block mb-1">Tarif unique</span>
+                      <div className="flex items-baseline gap-1.5">
+                        <span className="text-4xl font-black text-brand-blue tracking-tight">{pkg.price} €</span>
+                        <span className="text-[11px] text-gray-500 font-semibold">TTC</span>
                       </div>
                     </div>
 
-                    {/* Features list */}
-                    <div className="space-y-3 mb-8">
-                      <span className="text-[10px] font-bold text-brand-blue uppercase tracking-wider block">Ce qui est compris :</span>
-                      <ul className="space-y-2.5">
-                        {pkg.features.map((feat, index) => (
-                          <li key={index} className="flex items-start gap-2.5 text-xs text-gray-700">
-                            <Check className="w-4 h-4 text-[#34A853] shrink-0 mt-0.5 stroke-[2.5]" />
-                            <span className="leading-tight">{feat}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
+                    <ul className="mt-5 space-y-2.5">
+                      {pkg.features.map((feat, index) => (
+                        <li key={index} className="flex items-start gap-2.5 text-xs text-gray-700 leading-snug">
+                          <span className="mt-0.5 shrink-0 w-4 h-4 rounded-full bg-brand-red/10 text-brand-red flex items-center justify-center">
+                            <Check className="w-2.5 h-2.5 stroke-[3.5]" />
+                          </span>
+                          <span>{feat}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
 
-                  {/* CTA button */}
-                  <div>
-                    <button
-                      onClick={() => openBooking(pkg.id)}
-                      disabled
-                      className={`w-full py-4 rounded-xl text-xs font-bold transition-all opacity-50 cursor-not-allowed flex items-center justify-center gap-1.5 ${
-                        isPopular
-                          ? 'bg-brand-red text-white shadow-lg shadow-brand-red/10'
-                          : isFree
-                          ? 'bg-brand-blue text-white'
-                          : 'bg-white border border-brand-blue text-brand-blue'
-                      }`}
-                    >
-                      {isFree ? 'Réserver gratuitement' : 'Réserver mon créneau'}
-                      <ChevronRight className="w-4 h-4" />
-                    </button>
-                  </div>
+                  <button
+                    onClick={goToBooking}
+                    className={`mt-7 w-full py-3.5 rounded-xl text-xs font-bold uppercase tracking-wide flex items-center justify-center gap-1.5 transition-all hover:-translate-y-0.5 cursor-pointer ${
+                      isPopular
+                        ? 'bg-brand-red text-white shadow-red'
+                        : 'bg-brand-blue text-white shadow-soft hover:shadow-blue'
+                    }`}
+                  >
+                    Réserver mon créneau
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
                 </motion.div>
               );
             })}
           </div>
 
-          {/* Quick inline scheduler notification */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true, margin: "-50px" }}
-            transition={{ duration: 0.5 }}
-            className="bg-brand-cream border border-brand-lightblue rounded-3xl p-6 md:p-8 flex flex-col md:flex-row justify-between items-center gap-6 max-w-4xl mx-auto"
-          >
-            <div className="text-left space-y-1">
-              <h4 className="font-extrabold text-brand-blue text-lg flex items-center gap-2">
-                <Calendar className="w-5 h-5 text-brand-red animate-pulse" />
-                Vous hésitez encore sur la formule ?
-              </h4>
-              <p className="text-xs text-gray-500 max-w-xl">
-                Prenez un premier contact sans engagement. Notre appel d’orientation gratuit de 20 minutes vous permettra d’obtenir des réponses claires sur votre statut et de valider votre projet d’emploi suisse.
-              </p>
-            </div>
-            <button
-              onClick={() => openBooking('decouverte')}
-              disabled
-              className="bg-brand-blue text-white font-extrabold text-xs px-6 py-4 rounded-xl shrink-0 transition-all flex items-center gap-2 shadow-md opacity-50 cursor-not-allowed"
-            >
-              Prendre RDV (Calendly Gratuit)
-              <ArrowRight className="w-4 h-4 text-brand-red" />
-            </button>
-          </motion.div>
-
         </div>
       </div>
 
-      {/* Qui Sommes-Nous ? Section */}
-      <div ref={aboutRef} id="qui-sommes-nous" className="py-20 bg-white border-t border-brand-lightblue/40">
+      {/* ============================ RENDEZ-VOUS ============================ */}
+      <div ref={calendlyRef} id="calendly" className="py-16 md:py-24 bg-brand-cream border-t border-brand-lightblue/50 brand-glow">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+
+          <motion.div
+            initial={{ opacity: 0, y: 25 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-100px' }}
+            transition={{ duration: 0.6 }}
+            className="text-center space-y-5 max-w-2xl mx-auto mb-10"
+          >
+            <div className="flex justify-center"><Eyebrow center>Prise de rendez-vous</Eyebrow></div>
+            <h2 className="text-4xl md:text-5xl font-black text-brand-blue tracking-[-0.02em] leading-[1.05] text-balance">
+              Réservez votre créneau en ligne
+            </h2>
+            <p className="text-base text-gray-600 leading-relaxed">
+              Choisissez le moment qui vous convient directement dans notre agenda. Confirmation immédiate, sans engagement.
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-50px' }}
+            transition={{ duration: 0.5 }}
+            className="calendly-frame rounded-3xl border border-brand-lightblue overflow-hidden bg-white shadow-soft-lg"
+          >
+            <InlineWidget url={CALENDLY_URL} styles={{ minWidth: '100%', height: '700px' }} />
+          </motion.div>
+        </div>
+      </div>
+
+      {/* ============================ QUI SOMMES-NOUS ============================ */}
+      <div ref={aboutRef} id="qui-sommes-nous" className="py-16 md:py-24 bg-white border-t border-brand-lightblue/40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
           <motion.div
             initial={{ opacity: 0, y: 25 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
+            viewport={{ once: true, margin: '-100px' }}
             transition={{ duration: 0.6 }}
-            className="text-center space-y-4 max-w-3xl mx-auto mb-16"
+            className="text-center space-y-5 max-w-3xl mx-auto mb-12 md:mb-16"
           >
-            <h2 className="text-3xl md:text-4xl font-extrabold text-brand-blue tracking-tight font-sans">
+            <div className="flex justify-center"><Eyebrow center>Qui sommes-nous</Eyebrow></div>
+            <h2 className="text-4xl md:text-5xl font-black text-brand-blue tracking-[-0.02em] leading-[1.05] text-balance">
               La force de l’expérience terrain
             </h2>
-            <p className="text-sm md:text-base text-gray-500">
+            <p className="text-base text-gray-600 leading-relaxed">
               NCF n’est pas une agence de recrutement lointaine, mais un collectif d'accompagnateurs locaux basés entre Annemasse et Genève.
             </p>
           </motion.div>
@@ -331,21 +373,22 @@ export default function App() {
         </div>
       </div>
 
-      {/* F.A.Q Section */}
-      <div ref={faqRef} id="faq" className="py-20 bg-brand-cream border-t border-brand-lightblue/30">
+      {/* ============================ F.A.Q ============================ */}
+      <div ref={faqRef} id="faq" className="py-16 md:py-24 bg-brand-cream border-t border-brand-lightblue/30 brand-glow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
           <motion.div
             initial={{ opacity: 0, y: 25 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
+            viewport={{ once: true, margin: '-100px' }}
             transition={{ duration: 0.6 }}
-            className="text-center space-y-4 max-w-3xl mx-auto mb-12"
+            className="text-center space-y-5 max-w-3xl mx-auto mb-12"
           >
-            <h2 className="text-3xl md:text-4xl font-extrabold text-brand-blue tracking-tight font-sans">
+            <div className="flex justify-center"><Eyebrow center>Questions fréquentes</Eyebrow></div>
+            <h2 className="text-4xl md:text-5xl font-black text-brand-blue tracking-[-0.02em] leading-[1.05] text-balance">
               Tout savoir sur le statut frontalier suisse
             </h2>
-            <p className="text-sm md:text-base text-gray-500">
+            <p className="text-base text-gray-600 leading-relaxed">
               Retrouvez nos réponses claires aux questions les plus fréquemment posées par nos candidats à l'expatriation ou au travail frontalier.
             </p>
           </motion.div>
@@ -354,112 +397,60 @@ export default function App() {
         </div>
       </div>
 
-      {/* Floating Action / Booking Modal */}
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-brand-blue/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="relative w-full max-w-4xl bg-white rounded-3xl overflow-hidden shadow-2xl animate-scale-up border border-brand-lightblue">
-            {/* Close button */}
-            <button
-              onClick={() => setIsModalOpen(false)}
-              className="absolute top-4 right-4 z-10 bg-brand-cream text-brand-blue p-2 hover:bg-brand-red hover:text-white rounded-full transition-all cursor-pointer shadow-sm"
-              title="Fermer"
-            >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-
-            <BookingFlow
-              initialPackageId={activePackageId}
-              onClose={() => setIsModalOpen(false)}
-            />
-          </div>
-        </div>
-      )}
-
-      {/* Footer & Networks */}
+      {/* ============================ FOOTER ============================ */}
       <footer className="bg-brand-blue text-white pt-16 pb-8 border-t-2 border-brand-red">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
           <div className="grid grid-cols-1 md:grid-cols-12 gap-10 border-b border-white/10 pb-12 mb-8">
 
-            {/* Brand Intro Column */}
+            {/* Colonne marque */}
             <div className="md:col-span-5 space-y-4">
               <img
                 src="/wordmark-ncf-360.png"
                 alt="Né côté frontière — Née ici, les vrais conseils de frontière"
-                className="w-28 rounded-2xl shadow-md"
+                className="w-28 rounded-2xl shadow-soft-lg"
               />
-              <p className="text-xs text-brand-lightblue leading-relaxed max-w-sm">
+              <p className="text-sm text-brand-lightblue/90 leading-relaxed max-w-sm">
                 Service d’accompagnement de terrain pour concrétiser votre installation, réformer votre CV aux normes helvétiques et vous prémunir des erreurs administratives transfrontalières.
               </p>
             </div>
 
-            {/* Quick links */}
+            {/* Liens rapides */}
             <div className="md:col-span-3 space-y-3 text-left">
               <h4 className="text-xs font-bold uppercase tracking-widest text-brand-red">Ressources & Accès</h4>
-              <ul className="space-y-2 text-xs text-brand-lightblue">
-                <li>
-                  <button onClick={() => handleNavigate('services')} className="hover:text-white transition-all">Nos Tarifs & Packs</button>
-                </li>
-                <li>
-                  <button onClick={() => handleNavigate('qui-sommes-nous')} className="hover:text-white transition-all">Qui sommes-nous ?</button>
-                </li>
-                <li>
-                  <button onClick={() => handleNavigate('faq')} className="hover:text-white transition-all">F.A.Q Frontalière</button>
-                </li>
-                <li>
-                  <button onClick={() => openBooking('decouverte')} disabled className="text-brand-lightblue/40 font-semibold cursor-not-allowed">Réserver un créneau (bientôt disponible)</button>
-                </li>
+              <ul className="space-y-2 text-sm text-brand-lightblue/90">
+                <li><button onClick={() => handleNavigate('services')} className="hover:text-white transition-all">Nos Tarifs & Packs</button></li>
+                <li><button onClick={() => handleNavigate('qui-sommes-nous')} className="hover:text-white transition-all">Qui sommes-nous ?</button></li>
+                <li><button onClick={() => handleNavigate('faq')} className="hover:text-white transition-all">F.A.Q Frontalière</button></li>
+                <li><button onClick={goToBooking} className="hover:text-white transition-all">Prendre rendez-vous via Calendly</button></li>
               </ul>
             </div>
 
-            {/* Contacts & Social Networks */}
+            {/* Contacts & réseaux */}
             <div className="md:col-span-4 space-y-4">
               <h4 className="text-xs font-bold uppercase tracking-widest text-brand-red">Suivez-nous sur nos réseaux</h4>
 
-              {/* Social icons */}
               <div className="flex gap-3">
-                <a
-                  href="https://linkedin.com/company/ncf-accompagnement"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-10 h-10 bg-white/10 hover:bg-brand-red hover:text-white text-brand-lightblue rounded-xl flex items-center justify-center transition-all"
-                  title="LinkedIn"
-                >
-                  <Linkedin className="w-4 h-4" />
-                </a>
-                <a
-                  href="https://facebook.com/ncf-accompagnement"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-10 h-10 bg-white/10 hover:bg-brand-red hover:text-white text-brand-lightblue rounded-xl flex items-center justify-center transition-all"
-                  title="Facebook"
-                >
-                  <Facebook className="w-4 h-4" />
-                </a>
-                <a
-                  href="https://instagram.com/ncf-accompagnement"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-10 h-10 bg-white/10 hover:bg-brand-red hover:text-white text-brand-lightblue rounded-xl flex items-center justify-center transition-all"
-                  title="Instagram"
-                >
-                  <Instagram className="w-4 h-4" />
-                </a>
-                <a
-                  href="https://twitter.com/ncf"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-10 h-10 bg-white/10 hover:bg-brand-red hover:text-white text-brand-lightblue rounded-xl flex items-center justify-center transition-all"
-                  title="X (Twitter)"
-                >
-                  <Twitter className="w-4 h-4" />
-                </a>
+                {[
+                  { Icon: Linkedin, href: 'https://linkedin.com/company/ncf-accompagnement', title: 'LinkedIn' },
+                  { Icon: Facebook, href: 'https://facebook.com/ncf-accompagnement', title: 'Facebook' },
+                  { Icon: Instagram, href: 'https://instagram.com/ncf-accompagnement', title: 'Instagram' },
+                  { Icon: Twitter, href: 'https://twitter.com/ncf', title: 'X (Twitter)' },
+                ].map(({ Icon, href, title }) => (
+                  <a
+                    key={title}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-10 h-10 bg-white/10 hover:bg-brand-red hover:text-white text-brand-lightblue rounded-xl flex items-center justify-center transition-all hover:-translate-y-0.5"
+                    title={title}
+                  >
+                    <Icon className="w-4 h-4" />
+                  </a>
+                ))}
               </div>
 
-              {/* Local Contact details */}
-              <div className="space-y-1.5 pt-2 text-xs text-brand-lightblue">
+              <div className="space-y-1.5 pt-2 text-sm text-brand-lightblue/90">
                 <p className="flex items-center gap-2">
                   <Mail className="w-3.5 h-3.5 text-brand-red shrink-0" />
                   <span>contact@ncf-accompagnement.fr</span>
@@ -473,8 +464,7 @@ export default function App() {
 
           </div>
 
-          {/* Bottom Footer Credits */}
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-[10px] text-brand-lightblue/60">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-[10px] text-brand-lightblue/80">
             <p>© {new Date().getFullYear()} Né côté frontière — Accompagnement Frontalier. Tous droits réservés.</p>
             <div className="flex gap-4">
               <a href="#accueil" className="hover:underline">Mentions Légales</a>

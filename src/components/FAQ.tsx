@@ -31,7 +31,7 @@ export default function FAQ() {
             }}
             className={`text-xs font-bold px-4 py-2 rounded-full transition-all cursor-pointer ${
               activeCategory === cat
-                ? 'bg-brand-blue text-white shadow-md'
+                ? 'bg-brand-blue text-white shadow-soft'
                 : 'bg-white text-brand-blue border border-brand-lightblue hover:border-brand-blue/50'
             }`}
           >
@@ -52,7 +52,7 @@ export default function FAQ() {
               viewport={{ once: true, margin: '-40px' }}
               transition={{ duration: 0.35, delay: index * 0.04 }}
               className={`bg-white rounded-2xl border transition-all overflow-hidden ${
-                isOpen ? 'border-brand-blue shadow-md' : 'border-brand-lightblue'
+                isOpen ? 'border-brand-blue shadow-soft-lg' : 'border-brand-lightblue'
               }`}
             >
               <button

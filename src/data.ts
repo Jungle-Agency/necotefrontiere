@@ -2,36 +2,36 @@ import { ServicePackage, FAQItem, Testimonial } from './types';
 
 export const SERVICE_PACKAGES: ServicePackage[] = [
   {
-    id: 'decouverte',
-    name: 'Pack Découverte',
-    price: 0,
-    duration: '20 min',
-    description: 'Faisons connaissance et faisons le point sur votre projet d’expatriation ou de travail frontalier.',
+    id: 'cv-boost',
+    name: 'CV Boost',
+    price: 119,
+    duration: '2 à 4 jours ouvrés',
+    description: 'Pour ceux qui veulent un CV clair, professionnel et adapté au marché de l’emploi : personnes en recherche d’emploi, étudiants et jeunes diplômés.',
     features: [
-      'Appel visio ou téléphonique personnalisé',
-      'Diagnostic initial de votre situation',
-      'Évaluation de l’éligibilité de votre profil',
-      'Définition des prochaines étapes stratégiques',
-      'Sans aucun engagement'
+      'Analyse et optimisation de votre CV actuel',
+      'Refonte complète du CV (structure + mise en page + contenu)',
+      'Adaptation au secteur d’activité visé (France / Suisse)',
+      'Optimisation des mots-clés pour recruteurs',
+      '1 aller-retour de modifications'
     ],
-    badge: 'Gratuit',
-    icon: 'PhoneCall'
+    badge: 'Essentiel CV',
+    icon: 'FileText'
   },
   {
-    id: 'cv',
-    name: 'Pack CV Suisse',
-    price: 80,
-    duration: '1h d’accompagnement',
-    description: 'Optimisation complète de votre CV selon les critères très spécifiques des recruteurs suisses.',
+    id: 'cv-boost-coaching',
+    name: 'CV Boost + Coaching Express',
+    price: 169,
+    duration: '3 à 5 jours ouvrés',
+    description: 'L’offre complète pour maximiser vos chances d’être recruté rapidement, décrocher des entretiens et être guidé sur votre orientation.',
     features: [
-      'Refonte totale de votre CV actuel',
-      'Adaptation aux normes helvétiques (permis, mise en page, détails clés)',
-      'Valorisation de vos compétences transfrontalières',
-      'Rédaction d’un modèle de lettre de motivation adapté',
-      '2 sessions de retours pour un résultat parfait'
+      'Refonte complète de votre CV optimisé recruteur',
+      'Lettre de motivation personnalisée selon votre secteur',
+      'Rendez-vous de 40 minutes (conseils + stratégie emploi + orientation)',
+      'Optimisation des candidatures (comment postuler efficacement)',
+      '1 aller-retour de modifications'
     ],
-    badge: 'Essentiel',
-    icon: 'FileText'
+    badge: 'Premium',
+    icon: 'Briefcase'
   },
   {
     id: 'travail',
@@ -59,7 +59,10 @@ export const SERVICE_PACKAGES: ServicePackage[] = [
       'Aide à la recherche de logement (bassin genevois / Haute-Savoie)',
       'Étude comparative personnalisée LAMal vs CMU (Assurance Maladie)',
       'Explication et optimisation de la fiscalité (impôt à la source, quasi-résident)',
-      'Démarches douanières, banques suisses et devises (rapatriement du salaire)',
+      'Aide à comprendre les démarches douanières',
+      'Ouverture et choix des banques suisses',
+      'Gestion des devises et rapatriement du salaire',
+      'Conseils sur les principales démarches administratives liées à l’installation',
       'Assistance directe par messagerie pendant toute votre installation'
     ],
     badge: 'Sérénité Totale',

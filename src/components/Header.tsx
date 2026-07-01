@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Menu, X, PhoneCall, Globe2 } from 'lucide-react';
+import { Menu, X, CalendarCheck, Globe2 } from 'lucide-react';
 
 interface HeaderProps {
   onBookClick: () => void;
@@ -34,8 +34,8 @@ export default function Header({ onBookClick, onNavigate }: HeaderProps) {
               className="h-10 w-auto select-none"
             />
             <div className="flex flex-col">
-              <span className="text-lg font-extrabold text-brand-blue tracking-tight leading-none">Né côté frontière</span>
-              <span className="text-[9px] font-bold text-brand-red uppercase tracking-wider mt-1">Conseils frontaliers FR / CH</span>
+              <span className="text-base sm:text-lg font-extrabold text-brand-blue tracking-tight leading-none">Né côté frontière</span>
+              <span className="hidden sm:block text-[9px] font-bold text-brand-red uppercase tracking-wider mt-1">Conseils frontaliers FR / CH</span>
             </div>
           </div>
 
@@ -61,11 +61,10 @@ export default function Header({ onBookClick, onNavigate }: HeaderProps) {
             </div>
             <button
               onClick={onBookClick}
-              disabled
-              className="bg-brand-red text-white text-xs font-extrabold px-5 py-3 rounded-full shadow-lg shadow-brand-red/10 transition-all flex items-center gap-1.5 opacity-50 cursor-not-allowed"
+              className="bg-brand-red hover:bg-brand-red/90 text-white text-xs font-extrabold px-5 py-3 rounded-full shadow-red hover:-translate-y-0.5 transition-all flex items-center gap-1.5 cursor-pointer"
             >
-              <PhoneCall className="w-3.5 h-3.5" />
-              Appel Découverte (Gratuit)
+              <CalendarCheck className="w-3.5 h-3.5" />
+              RDV Découverte (Gratuit)
             </button>
           </div>
 
@@ -73,11 +72,10 @@ export default function Header({ onBookClick, onNavigate }: HeaderProps) {
           <div className="flex items-center gap-2 md:hidden">
             <button
               onClick={onBookClick}
-              disabled
-              className="bg-brand-red text-white p-2.5 rounded-full shadow-md shadow-brand-red/10 flex items-center justify-center transition-all opacity-50 cursor-not-allowed"
-              title="Réservation bientôt disponible"
+              className="bg-brand-red hover:bg-brand-red/90 text-white p-2.5 rounded-full shadow-red flex items-center justify-center transition-all cursor-pointer"
+              title="Prendre rendez-vous via Calendly"
             >
-              <PhoneCall className="w-4 h-4" />
+              <CalendarCheck className="w-4 h-4" />
             </button>
             <button
               onClick={() => setIsOpen(!isOpen)}
@@ -115,10 +113,9 @@ export default function Header({ onBookClick, onNavigate }: HeaderProps) {
                 onBookClick();
                 setIsOpen(false);
               }}
-              disabled
-              className="w-full bg-brand-blue text-white font-extrabold text-sm py-4 rounded-xl flex items-center justify-center gap-2 shadow-md opacity-50 cursor-not-allowed"
+              className="w-full bg-brand-blue hover:bg-brand-blue/90 text-white font-extrabold text-sm py-4 rounded-xl flex items-center justify-center gap-2 shadow-blue cursor-pointer transition-all"
             >
-              <PhoneCall className="w-4 h-4" />
+              <CalendarCheck className="w-4 h-4" />
               Réserver mon RDV Gratuit
             </button>
           </div>
