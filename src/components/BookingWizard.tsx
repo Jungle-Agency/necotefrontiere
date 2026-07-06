@@ -4,13 +4,16 @@ import {
   Briefcase,
   CalendarCheck,
   Check,
+  ChevronLeft,
+  ChevronRight,
   Compass,
   Copy,
   FileText,
   Home,
   Mail,
   Send,
-  Sparkles
+  Sparkles,
+  X
 } from 'lucide-react';
 import { CONTACT_EMAIL } from '../config';
 
@@ -82,22 +85,24 @@ const RECOMMENDATIONS: Record<Objective, { title: string; detail: string }> = {
 
 const PERIODS = ['Matin (9h–12h)', 'Après-midi (14h–18h)', 'Soir (18h–20h)'];
 const MAX_SLOTS = 3;
+/* Fenêtre de réservation : de demain à 4 semaines, jours ouvrés uniquement. */
+const BOOKING_WINDOW_DAYS = 28;
 
-/** Les 8 prochains jours ouvrés (lundi–vendredi), libellés en français. */
-function upcomingBusinessDays(count = 8): { key: string; label: string }[] {
-  const days: { key: string; label: string }[] = [];
-  const d = new Date();
-  while (days.length < count) {
-    d.setDate(d.getDate() + 1);
-    const dow = d.getDay();
-    if (dow !== 0 && dow !== 6) {
-      days.push({
-        key: d.toISOString().slice(0, 10),
-        label: d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })
-      });
-    }
-  }
-  return days;
+const DAY_HEADERS = ['lu', 'ma', 'me', 'je', 've', 'sa', 'di'];
+
+function startOfDay(d: Date) {
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+}
+function addDays(d: Date, n: number) {
+  const r = new Date(d);
+  r.setDate(r.getDate() + n);
+  return r;
+}
+function firstOfMonth(d: Date) {
+  return new Date(d.getFullYear(), d.getMonth(), 1);
+}
+function dayLabel(d: Date) {
+  return d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
 }
 
 function StepDots({ step }: { step: 1 | 2 | 3 | 4 }) {
@@ -144,7 +149,32 @@ export default function BookingWizard({ initialObjective = null }: BookingWizard
   const [sent, setSent] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const days = useMemo(() => upcomingBusinessDays(), []);
+  // Vue calendrier (étape 3)
+  const minDay = useMemo(() => addDays(startOfDay(new Date()), 1), []);
+  const maxDay = useMemo(() => addDays(minDay, BOOKING_WINDOW_DAYS - 1), [minDay]);
+  const [viewMonth, setViewMonth] = useState(() => firstOfMonth(minDay));
+  const [selectedDay, setSelectedDay] = useState<Date | null>(null);
+
+  const isSelectable = (d: Date) => {
+    const dow = d.getDay();
+    return dow !== 0 && dow !== 6 && d >= minDay && d <= maxDay;
+  };
+
+  // Cellules du mois affiché : cases vides d'alignement (semaine qui commence lundi) puis les jours
+  const monthCells = useMemo<(Date | null)[]>(() => {
+    const lead = (viewMonth.getDay() + 6) % 7;
+    const daysInMonth = new Date(viewMonth.getFullYear(), viewMonth.getMonth() + 1, 0).getDate();
+    return [
+      ...Array.from({ length: lead }, () => null),
+      ...Array.from({ length: daysInMonth }, (_, i) => new Date(viewMonth.getFullYear(), viewMonth.getMonth(), i + 1))
+    ];
+  }, [viewMonth]);
+
+  const canPrev = viewMonth.getTime() > firstOfMonth(minDay).getTime();
+  const canNext = new Date(viewMonth.getFullYear(), viewMonth.getMonth() + 1, 1).getTime() <= firstOfMonth(maxDay).getTime();
+
+  const slotOf = (d: Date, period: string) => `${dayLabel(d)} — ${period}`;
+  const daySlotCount = (d: Date) => PERIODS.filter((p) => slots.includes(slotOf(d, p))).length;
 
   // Un clic sur le bouton d'une offre pré-remplit le projet et saute l'étape 1
   useEffect(() => {
@@ -331,34 +361,132 @@ export default function BookingWizard({ initialObjective = null }: BookingWizard
             </p>
           </div>
 
-          <div className="rounded-2xl border-2 border-brand-lightblue bg-white overflow-hidden">
-            <div className="max-h-72 overflow-y-auto divide-y divide-brand-lightblue/60">
-              {days.map((day) => (
-                <div key={day.key} className="flex flex-col sm:flex-row sm:items-center gap-2 px-4 py-3">
-                  <span className="sm:w-44 shrink-0 text-sm font-bold text-brand-blue capitalize">{day.label}</span>
-                  <div className="flex flex-wrap gap-2">
-                    {PERIODS.map((period) => {
-                      const slot = `${day.label} — ${period}`;
-                      const active = slots.includes(slot);
-                      const full = !active && slots.length >= MAX_SLOTS;
-                      return (
-                        <button
-                          key={period}
-                          onClick={() => toggleSlot(slot)}
-                          disabled={full}
-                          className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-all cursor-pointer disabled:opacity-35 disabled:cursor-not-allowed ${
-                            active
-                              ? 'bg-brand-blue border-brand-blue text-white'
-                              : 'bg-white border-brand-lightblue text-brand-blue hover:border-brand-blue/50'
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+            {/* ——— Calendrier ——— */}
+            <div className="rounded-2xl border-2 border-brand-lightblue bg-white p-4">
+              <div className="flex items-center justify-between mb-3">
+                <button
+                  onClick={() => canPrev && setViewMonth(new Date(viewMonth.getFullYear(), viewMonth.getMonth() - 1, 1))}
+                  disabled={!canPrev}
+                  aria-label="Mois précédent"
+                  className="w-8 h-8 rounded-full flex items-center justify-center text-brand-blue hover:bg-brand-lightblue/50 disabled:opacity-25 disabled:cursor-default transition-colors cursor-pointer"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <span className="font-display font-black text-sm text-brand-blue capitalize">
+                  {viewMonth.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}
+                </span>
+                <button
+                  onClick={() => canNext && setViewMonth(new Date(viewMonth.getFullYear(), viewMonth.getMonth() + 1, 1))}
+                  disabled={!canNext}
+                  aria-label="Mois suivant"
+                  className="w-8 h-8 rounded-full flex items-center justify-center text-brand-blue hover:bg-brand-lightblue/50 disabled:opacity-25 disabled:cursor-default transition-colors cursor-pointer"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+
+              <div className="grid grid-cols-7 gap-1 text-center mb-1">
+                {DAY_HEADERS.map((h) => (
+                  <span key={h} className="text-[10px] font-bold uppercase tracking-wider text-brand-blue/40 py-1">
+                    {h}
+                  </span>
+                ))}
+              </div>
+
+              <div className="grid grid-cols-7 gap-1">
+                {monthCells.map((d, i) => {
+                  if (!d) return <span key={`blank-${i}`} />;
+                  const selectable = isSelectable(d);
+                  const isSelected = selectedDay?.getTime() === d.getTime();
+                  const count = daySlotCount(d);
+                  return (
+                    <button
+                      key={d.getTime()}
+                      onClick={() => selectable && setSelectedDay(d)}
+                      disabled={!selectable}
+                      className={`relative aspect-square rounded-xl text-sm font-semibold transition-all cursor-pointer disabled:cursor-default ${
+                        isSelected
+                          ? 'bg-brand-blue text-white shadow-soft'
+                          : selectable
+                            ? 'text-brand-blue hover:bg-brand-lightblue/60'
+                            : 'text-gray-300'
+                      }`}
+                    >
+                      {d.getDate()}
+                      {count > 0 && (
+                        <span
+                          className={`absolute bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full ${
+                            isSelected ? 'bg-white' : 'bg-brand-red'
                           }`}
-                        >
-                          {period}
-                        </button>
-                      );
-                    })}
+                        />
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* ——— Périodes du jour sélectionné + créneaux retenus ——— */}
+            <div className="space-y-4">
+              <div className="rounded-2xl border-2 border-brand-lightblue bg-white p-4 min-h-36">
+                {selectedDay ? (
+                  <div className="space-y-3">
+                    <p className="text-sm font-bold text-brand-blue capitalize">{dayLabel(selectedDay)}</p>
+                    <div className="flex flex-wrap gap-2">
+                      {PERIODS.map((period) => {
+                        const slot = slotOf(selectedDay, period);
+                        const active = slots.includes(slot);
+                        const full = !active && slots.length >= MAX_SLOTS;
+                        return (
+                          <button
+                            key={period}
+                            onClick={() => toggleSlot(slot)}
+                            disabled={full}
+                            className={`text-xs font-semibold px-3.5 py-2 rounded-full border transition-all cursor-pointer disabled:opacity-35 disabled:cursor-not-allowed ${
+                              active
+                                ? 'bg-brand-blue border-brand-blue text-white'
+                                : 'bg-white border-brand-lightblue text-brand-blue hover:border-brand-blue/50'
+                            }`}
+                          >
+                            {period}
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
+                ) : (
+                  <p className="text-sm text-gray-500 leading-relaxed">
+                    Sélectionnez un jour dans le calendrier pour choisir vos horaires — les week-ends
+                    ne sont pas proposés.
+                  </p>
+                )}
+              </div>
+
+              {slots.length > 0 && (
+                <div className="space-y-2">
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-brand-blue/60">
+                    Vos créneaux proposés
+                  </p>
+                  <ul className="space-y-1.5">
+                    {slots.map((s) => (
+                      <li
+                        key={s}
+                        className="flex items-center justify-between gap-2 bg-brand-cream border border-brand-lightblue rounded-xl px-3 py-2 text-xs font-semibold text-brand-blue capitalize"
+                      >
+                        {s}
+                        <button
+                          onClick={() => toggleSlot(s)}
+                          aria-label={`Retirer le créneau ${s}`}
+                          className="shrink-0 w-5 h-5 rounded-full bg-white text-brand-blue/60 hover:text-brand-red flex items-center justify-center transition-colors cursor-pointer"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-              ))}
+              )}
             </div>
           </div>
 
