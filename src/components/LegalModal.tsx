@@ -191,8 +191,11 @@ function PrivacyContent() {
       <h2>8. Cookies</h2>
       <p>
         Le Site n’utilise pas de cookie publicitaire ni de traceur tiers, et ne charge aucun
-        service tiers de suivi. Vous pouvez par ailleurs configurer votre navigateur pour refuser
-        les cookies.
+        service tiers de suivi. Un bandeau de consentement vous permet d’accepter ou de refuser
+        par avance le dépôt d’éventuels cookies de mesure d’audience ; votre choix est conservé
+        localement dans votre navigateur (localStorage) et modifiable à tout moment via le lien
+        « Gérer les cookies » en bas de page. Vous pouvez par ailleurs configurer votre navigateur
+        pour refuser les cookies.
       </p>
 
       <h2>9. Vos droits</h2>

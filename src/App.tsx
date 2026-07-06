@@ -16,6 +16,7 @@ import About from './components/About';
 import BookingWizard, { type Objective } from './components/BookingWizard';
 import LegalModal, { type LegalTab } from './components/LegalModal';
 import HowItWorks from './components/HowItWorks';
+import CookieBanner, { getCookieConsent } from './components/CookieBanner';
 
 // Le bouton d'une offre pré-remplit le parcours de prise de rendez-vous
 const PKG_OBJECTIVE: Record<string, Objective> = {
@@ -76,6 +77,9 @@ export default function App() {
     setLegalTab(tab);
     setLegalOpen(true);
   };
+
+  // Bandeau cookies : affiché tant que le visiteur n'a pas exprimé de choix
+  const [cookieBannerVisible, setCookieBannerVisible] = useState(() => getCookieConsent() === null);
 
   return (
     <MotionConfig reducedMotion="user">
@@ -479,9 +483,10 @@ export default function App() {
 
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-[10px] text-brand-lightblue/80">
             <p>© {new Date().getFullYear()} Né côté frontière — Accompagnement Frontalier. Tous droits réservés.</p>
-            <div className="flex gap-4">
+            <div className="flex flex-wrap gap-4">
               <button onClick={() => openLegal('cgu')} className="hover:underline cursor-pointer">Mentions Légales & CGU</button>
               <button onClick={() => openLegal('privacy')} className="hover:underline cursor-pointer">Politique de Confidentialité</button>
+              <button onClick={() => setCookieBannerVisible(true)} className="hover:underline cursor-pointer">Gérer les cookies</button>
             </div>
           </div>
 
@@ -490,6 +495,14 @@ export default function App() {
 
       {/* Modale légale */}
       <LegalModal isOpen={legalOpen} initialTab={legalTab} onClose={() => setLegalOpen(false)} />
+
+      {/* Bandeau cookies */}
+      {cookieBannerVisible && (
+        <CookieBanner
+          onChoice={() => setCookieBannerVisible(false)}
+          onOpenPrivacy={() => openLegal('privacy')}
+        />
+      )}
     </div>
     </MotionConfig>
   );
