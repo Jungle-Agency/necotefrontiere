@@ -15,6 +15,8 @@ import FAQ from './components/FAQ';
 import About from './components/About';
 import CalendlyBooking from './components/CalendlyBooking';
 import LegalModal, { type LegalTab } from './components/LegalModal';
+import BorderLine from './components/BorderLine';
+import HowItWorks from './components/HowItWorks';
 
 // Photo du Jet d'eau de Genève (lac Léman) — self-hébergée (WebP optimisé),
 // préchargée depuis index.html. Pour changer d'image : remplace public/hero-leman.webp.
@@ -69,6 +71,9 @@ export default function App() {
       {/* Header / Navbar */}
       <Header onBookClick={goToBooking} onNavigate={handleNavigate} />
 
+      {/* Ligne de frontière — élément signature, se dessine au scroll */}
+      <BorderLine />
+
       <main>
       {/* ============================ HERO ============================ */}
       <section
@@ -101,7 +106,7 @@ export default function App() {
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.1, ease: 'easeOut' }}
-                className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-[-0.02em] leading-[1.02] sm:leading-[0.95] text-brand-blue text-balance"
+                className="text-4xl sm:text-6xl lg:text-7xl font-display font-black tracking-[-0.02em] leading-[1.02] sm:leading-[0.95] text-brand-blue text-balance"
               >
                 Votre alliée pour <br className="hidden sm:inline" />
                 réussir votre vie <br className="hidden sm:inline" />
@@ -118,9 +123,8 @@ export default function App() {
                 transition={{ duration: 0.5, delay: 0.3 }}
                 className="pt-1"
               >
-                <p className="text-3xl sm:text-4xl text-brand-red font-cursive select-none">
+                <p className="text-4xl sm:text-5xl text-brand-red font-cursive font-semibold -rotate-1 select-none">
                   Née ici, les vrais conseils de frontière.
-                  <span className="align-middle text-[0.55em] ml-1">♥</span>
                 </p>
               </motion.div>
             </div>
@@ -143,7 +147,7 @@ export default function App() {
             >
               <button
                 onClick={goToBooking}
-                className="group bg-brand-red hover:bg-brand-red text-white font-bold text-sm px-8 py-4 rounded-2xl shadow-red hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="group bg-brand-red hover:bg-brand-red/90 text-white font-bold text-sm px-8 py-4 rounded-2xl shadow-red hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Calendar className="w-4 h-4" />
                 Prendre RDV gratuit (20 min)
@@ -194,6 +198,9 @@ export default function App() {
         </div>
       </div>
 
+      {/* ============================ COMMENT ÇA SE PASSE ============================ */}
+      <HowItWorks onBookClick={goToBooking} />
+
       {/* ============================ SERVICES ============================ */}
       <section ref={servicesRef} id="services" className="py-16 md:py-24 bg-white brand-glow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -206,7 +213,7 @@ export default function App() {
             className="text-center space-y-5 max-w-3xl mx-auto mb-10 md:mb-14"
           >
             <div className="flex justify-center"><Eyebrow center>Nos offres</Eyebrow></div>
-            <h2 className="text-4xl md:text-5xl font-black text-brand-blue tracking-[-0.02em] leading-[1.05] text-balance">
+            <h2 className="text-4xl md:text-5xl font-display font-black text-brand-blue tracking-[-0.02em] leading-[1.05] text-balance">
               Des offres adaptées à chaque étape de votre projet suisse
             </h2>
             <p className="text-base text-gray-600 leading-relaxed text-pretty">
@@ -224,13 +231,23 @@ export default function App() {
           >
             {/* Filet rouge éditorial */}
             <span className="absolute inset-y-0 left-0 w-1.5 bg-brand-red" />
+
+            {/* Tampon douanier */}
+            <span
+              aria-hidden="true"
+              className="hidden lg:block absolute top-5 right-8 -rotate-6 border-2 border-brand-red/50 rounded-md p-1 text-brand-red/70"
+            >
+              <span className="block border border-brand-red/40 rounded-sm px-3 py-1 font-display font-black text-[11px] uppercase tracking-[0.25em]">
+                Offert
+              </span>
+            </span>
             <div className="p-8 md:p-10 md:pl-12 flex flex-col md:flex-row items-start md:items-center justify-between gap-7">
               <div className="space-y-3 max-w-2xl">
                 <span className="inline-flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-[0.2em] text-brand-red">
                   <Calendar className="w-3.5 h-3.5" />
                   Gratuit · 20 min · Sans engagement
                 </span>
-                <h3 className="text-2xl md:text-3xl font-black tracking-tight leading-tight text-brand-blue text-balance">
+                <h3 className="text-2xl md:text-3xl font-display font-black tracking-tight leading-tight text-brand-blue text-balance">
                   Commencez par un rendez-vous découverte offert
                 </h3>
                 <p className="text-sm md:text-base text-gray-600 leading-relaxed text-pretty">
@@ -248,7 +265,7 @@ export default function App() {
           </motion.div>
 
           {/* Grille des offres */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 items-stretch">
             {SERVICE_PACKAGES.map((pkg, idx) => {
               const isPopular = pkg.id === 'travail';
               return (
@@ -261,7 +278,7 @@ export default function App() {
                   whileHover={{ y: -8, transition: { duration: 0.25 } }}
                   className={`group relative rounded-3xl border p-7 md:p-8 flex flex-col bg-white transition-shadow duration-300 cursor-default ${
                     isPopular
-                      ? 'border-brand-blue/25 shadow-soft-lg lg:-translate-y-3'
+                      ? 'border-brand-blue/25 shadow-soft-lg xl:-translate-y-3'
                       : 'border-brand-lightblue shadow-soft hover:shadow-soft-lg'
                   }`}
                 >
@@ -280,20 +297,20 @@ export default function App() {
                       <Clock className="w-3.5 h-3.5 shrink-0" /> {pkg.duration}
                     </span>
 
-                    <h3 className="mt-4 text-xl font-black text-brand-blue tracking-tight">{pkg.name}</h3>
-                    <p className="mt-2 text-xs text-gray-600 leading-relaxed">{pkg.description}</p>
+                    <h3 className="mt-4 text-xl font-display font-black text-brand-blue tracking-tight">{pkg.name}</h3>
+                    <p className="mt-2 text-sm text-gray-600 leading-relaxed">{pkg.description}</p>
 
                     <div className="mt-5 pt-5 border-t border-brand-lightblue/60">
                       <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider block mb-1">Tarif unique</span>
                       <div className="flex items-baseline gap-1.5">
-                        <span className="text-4xl font-black text-brand-blue tracking-tight">{pkg.price} €</span>
+                        <span className="text-4xl font-display font-black text-brand-blue tracking-tight">{pkg.price} €</span>
                         <span className="text-[11px] text-gray-500 font-semibold">TTC</span>
                       </div>
                     </div>
 
                     <ul className="mt-5 space-y-2.5">
                       {pkg.features.map((feat, index) => (
-                        <li key={index} className="flex items-start gap-2.5 text-xs text-gray-700 leading-snug">
+                        <li key={index} className="flex items-start gap-2.5 text-sm text-gray-700 leading-snug">
                           <span className="mt-0.5 shrink-0 w-4 h-4 rounded-full bg-brand-red/10 text-brand-red flex items-center justify-center">
                             <Check className="w-2.5 h-2.5 stroke-[3.5]" />
                           </span>
@@ -334,7 +351,7 @@ export default function App() {
             className="text-center space-y-5 max-w-2xl mx-auto mb-10"
           >
             <div className="flex justify-center"><Eyebrow center>Prise de rendez-vous</Eyebrow></div>
-            <h2 className="text-4xl md:text-5xl font-black text-brand-blue tracking-[-0.02em] leading-[1.05] text-balance">
+            <h2 className="text-4xl md:text-5xl font-display font-black text-brand-blue tracking-[-0.02em] leading-[1.05] text-balance">
               Réservez votre créneau en ligne
             </h2>
             <p className="text-base text-gray-600 leading-relaxed">
@@ -366,7 +383,7 @@ export default function App() {
             className="text-center space-y-5 max-w-3xl mx-auto mb-12 md:mb-16"
           >
             <div className="flex justify-center"><Eyebrow center>Qui sommes-nous</Eyebrow></div>
-            <h2 className="text-4xl md:text-5xl font-black text-brand-blue tracking-[-0.02em] leading-[1.05] text-balance">
+            <h2 className="text-4xl md:text-5xl font-display font-black text-brand-blue tracking-[-0.02em] leading-[1.05] text-balance">
               La force de l’expérience terrain
             </h2>
             <p className="text-base text-gray-600 leading-relaxed">
@@ -390,7 +407,7 @@ export default function App() {
             className="text-center space-y-5 max-w-3xl mx-auto mb-12"
           >
             <div className="flex justify-center"><Eyebrow center>Questions fréquentes</Eyebrow></div>
-            <h2 className="text-4xl md:text-5xl font-black text-brand-blue tracking-[-0.02em] leading-[1.05] text-balance">
+            <h2 className="text-4xl md:text-5xl font-display font-black text-brand-blue tracking-[-0.02em] leading-[1.05] text-balance">
               Tout savoir sur le statut frontalier suisse
             </h2>
             <p className="text-base text-gray-600 leading-relaxed">

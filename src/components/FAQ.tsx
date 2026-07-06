@@ -85,7 +85,7 @@ export default function FAQ() {
                       <span className="inline-block text-[10px] font-bold uppercase tracking-wider text-brand-red bg-brand-lightblue/40 px-2.5 py-0.5 rounded-full mb-2">
                         {item.category}
                       </span>
-                      <p className="text-xs md:text-sm text-gray-600 leading-relaxed">{item.answer}</p>
+                      <p className="text-sm md:text-base text-gray-600 leading-relaxed">{item.answer}</p>
                     </div>
                   </motion.div>
                 )}

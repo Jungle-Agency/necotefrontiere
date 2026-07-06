@@ -34,7 +34,7 @@ export default function Header({ onBookClick, onNavigate }: HeaderProps) {
               className="h-10 w-auto select-none"
             />
             <div className="flex flex-col">
-              <span className="text-base sm:text-lg font-extrabold text-brand-blue tracking-tight leading-none">Né côté frontière</span>
+              <span className="text-base sm:text-lg font-display font-extrabold text-brand-blue tracking-tight leading-none">Né côté frontière</span>
               <span className="hidden sm:block text-[9px] font-bold text-brand-red uppercase tracking-wider mt-1">Conseils frontaliers FR / CH</span>
             </div>
           </div>

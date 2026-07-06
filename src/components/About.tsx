@@ -33,8 +33,8 @@ export default function About() {
           className="space-y-6"
         >
 
-          <h3 className="text-2xl md:text-3xl font-bold text-brand-blue tracking-tight leading-tight">
-            Une équipe née à la <span className="text-cursive text-brand-red text-4xl block sm:inline">frontière</span> franco-suisse.
+          <h3 className="text-2xl md:text-3xl font-display font-bold text-brand-blue tracking-tight leading-tight">
+            Une équipe née à la <span className="text-cursive text-brand-red text-4xl md:text-5xl block sm:inline">frontière</span> franco-suisse.
           </h3>
 
           <p className="text-sm md:text-base text-gray-600 leading-relaxed">
@@ -76,8 +76,8 @@ export default function About() {
             <div className="w-10 h-10 rounded-xl bg-brand-lightblue/60 text-brand-blue flex items-center justify-center mb-4">
               <Sparkles className="w-5 h-5 text-brand-red" />
             </div>
-            <h4 className="font-bold text-brand-blue text-sm mb-2">100% Locale</h4>
-            <p className="text-xs text-gray-600 leading-relaxed">
+            <h4 className="font-display font-bold text-brand-blue text-sm mb-2">100% Locale</h4>
+            <p className="text-sm text-gray-600 leading-relaxed">
               Une connaissance fine et en temps réel des réglementations fiscales, du droit d'option assurance et des loyers frontaliers.
             </p>
           </motion.div>
@@ -90,8 +90,8 @@ export default function About() {
             <div className="w-10 h-10 rounded-xl bg-brand-lightblue/60 text-brand-blue flex items-center justify-center mb-4">
               <ShieldCheck className="w-5 h-5" />
             </div>
-            <h4 className="font-bold text-brand-blue text-sm mb-2">Accompagnement Neutre</h4>
-            <p className="text-xs text-gray-600 leading-relaxed">
+            <h4 className="font-display font-bold text-brand-blue text-sm mb-2">Accompagnement Neutre</h4>
+            <p className="text-sm text-gray-600 leading-relaxed">
               Aucun partenariat caché avec des assureurs ou des banques. Nos calculs et conseils sont faits exclusivement dans votre intérêt.
             </p>
           </motion.div>
@@ -104,8 +104,8 @@ export default function About() {
             <div className="w-10 h-10 rounded-xl bg-brand-lightblue/60 text-brand-blue flex items-center justify-center mb-4">
               <Landmark className="w-5 h-5" />
             </div>
-            <h4 className="font-bold text-brand-blue text-sm mb-2">Normes Suisses</h4>
-            <p className="text-xs text-gray-600 leading-relaxed">
+            <h4 className="font-display font-bold text-brand-blue text-sm mb-2">Normes Suisses</h4>
+            <p className="text-sm text-gray-600 leading-relaxed">
               Des templates de CV et de lettres de motivation validés par des spécialistes du recrutement en Suisse Romande.
             </p>
           </motion.div>
@@ -118,8 +118,8 @@ export default function About() {
             <div className="w-10 h-10 rounded-xl bg-brand-lightblue/60 text-brand-blue flex items-center justify-center mb-4">
               <HeartHandshake className="w-5 h-5 text-brand-red" />
             </div>
-            <h4 className="font-bold text-brand-blue text-sm mb-2">Authenticité</h4>
-            <p className="text-xs text-gray-600 leading-relaxed">
+            <h4 className="font-display font-bold text-brand-blue text-sm mb-2">Authenticité</h4>
+            <p className="text-sm text-gray-600 leading-relaxed">
               Pas de théories abstraites. Des conseils vécus et testés en pratique pour démarrer votre nouvelle vie sans stress.
             </p>
           </motion.div>
@@ -131,7 +131,7 @@ export default function About() {
       <div className="space-y-6 pt-8 border-t border-brand-gray">
         <div className="text-center space-y-2">
           <span className="text-[10px] uppercase font-bold tracking-widest text-brand-red">Témoignages</span>
-          <h4 className="text-xl md:text-2xl font-bold text-brand-blue font-sans">Ils ont réussi grâce à NCF</h4>
+          <h4 className="text-xl md:text-2xl font-display font-bold text-brand-blue">Ils ont réussi grâce à NCF</h4>
           <p className="text-xs md:text-sm text-gray-600 max-w-xl mx-auto">Découvrez les retours d'expérience de professionnels de divers secteurs installés à la frontière genevoise.</p>
         </div>
 
@@ -149,7 +149,7 @@ export default function About() {
               whileHover={{ y: -8, scale: 1.01, transition: { duration: 0.2 } }}
               className="bg-brand-cream/40 border border-brand-lightblue p-6 rounded-2xl flex flex-col justify-between h-full hover:bg-white hover:shadow-soft-lg transition-all cursor-default"
             >
-              <p className="text-xs md:text-sm text-gray-600 leading-relaxed italic mb-6">
+              <p className="text-sm text-gray-600 leading-relaxed italic mb-6">
                 "{test.text}"
               </p>
 

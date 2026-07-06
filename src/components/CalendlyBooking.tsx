@@ -21,7 +21,7 @@ export default function CalendlyBooking() {
         <CalendarCheck className="w-7 h-7 text-brand-red" />
       </div>
       <div className="space-y-2 max-w-md">
-        <h3 className="text-lg font-black text-brand-blue tracking-tight">
+        <h3 className="text-lg font-display font-black text-brand-blue tracking-tight">
           Afficher l’agenda de réservation
         </h3>
         <p className="text-sm text-gray-600 leading-relaxed">
