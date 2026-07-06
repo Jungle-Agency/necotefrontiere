@@ -108,21 +108,18 @@ export const TESTIMONIALS: Testimonial[] = [
     name: 'Mélanie D.',
     role: 'Infirmière à l’Hôpital de Genève (HUG)',
     location: 'Habite à Annemasse',
-    text: 'Le diagnostic gratuit m’a permis de comprendre directement mes options d’assurance maladie. J’ai ensuite pris le Pack Installation : un gain de temps inestimable pour choisir la LAMal et ouvrir mon compte de rapatriement de salaire sans frais !',
-    avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=120'
+    text: 'Le diagnostic gratuit m’a permis de comprendre directement mes options d’assurance maladie. J’ai ensuite pris le Pack Installation : un gain de temps inestimable pour choisir la LAMal et ouvrir mon compte de rapatriement de salaire sans frais !'
   },
   {
     name: 'Thomas R.',
     role: 'Chef de projet IT',
     location: 'Habite à Saint-Julien-en-Genevois',
-    text: 'Je cherchais à travailler à Genève depuis 6 mois sans succès. Avec le Pack CV de NCF, mon CV a été complètement transformé. Résultat : 3 entretiens décrochés en 3 semaines, et un contrat signé avec le permis G en poche ! Je recommande les yeux fermés.',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=120'
+    text: 'Je cherchais à travailler à Genève depuis 6 mois sans succès. Avec le Pack CV de NCF, mon CV a été complètement transformé. Résultat : 3 entretiens décrochés en 3 semaines, et un contrat signé avec le permis G en poche ! Je recommande les yeux fermés.'
   },
   {
     name: 'Julien et Sarah',
     role: 'Ingénieur & Enseignante',
     location: 'S’installent en Haute-Savoie',
-    text: 'Nous déménagions depuis Lyon. Le Pack Recherche et le Pack Installation nous ont évité des erreurs sur l’impôt à la source genevois et la déclaration de nos voitures à la douane. Des conseils ultra-concrets par des experts qui connaissent par cœur le terrain !',
-    avatar: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&q=80&w=120'
+    text: 'Nous déménagions depuis Lyon. Le Pack Recherche et le Pack Installation nous ont évité des erreurs sur l’impôt à la source genevois et la déclaration de nos voitures à la douane. Des conseils ultra-concrets par des experts qui connaissent par cœur le terrain !'
   }
 ];

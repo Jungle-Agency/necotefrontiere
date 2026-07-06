@@ -85,6 +85,45 @@
   }
 }
 
+/* ———————————— Contenu légal (modale CGU / Confidentialité) ———————————— */
+.legal-content h2 {
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: var(--color-brand-blue);
+  letter-spacing: -0.01em;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+}
+.legal-content h2:first-child {
+  margin-top: 0;
+}
+.legal-content h3 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-brand-blue);
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+.legal-content p,
+.legal-content li {
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: #4b5563;
+  margin-bottom: 0.75rem;
+}
+.legal-content ul {
+  list-style: disc;
+  padding-left: 1.25rem;
+  margin-bottom: 1rem;
+}
+.legal-content li {
+  margin-bottom: 0.25rem;
+}
+.legal-content strong {
+  color: var(--color-brand-blue);
+  font-weight: 600;
+}
+
 /* Finitions globales (sans changer la direction artistique) */
 @layer base {
   html {
@@ -92,6 +131,17 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+  }
+  /* Respect de la préférence utilisateur « réduire les animations » */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    .animate-fade-in,
+    .animate-scale-up,
+    .animate-spin-slow {
+      animation: none;
+    }
   }
   /* Décalage d'ancrage pour ne pas passer sous le header sticky */
   [id] {

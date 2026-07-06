@@ -154,12 +154,12 @@ export default function About() {
               </p>
 
               <div className="flex items-center gap-3">
-                <img
-                  src={test.avatar}
-                  alt={test.name}
-                  referrerPolicy="no-referrer"
-                  className="w-10 h-10 rounded-full object-cover border-2 border-brand-blue"
-                />
+                <span
+                  aria-hidden="true"
+                  className="w-10 h-10 rounded-full bg-brand-blue text-white text-xs font-black flex items-center justify-center border-2 border-brand-lightblue shrink-0"
+                >
+                  {test.name.split(/[\s-]+/).slice(0, 2).map((part) => part[0]).join('').toUpperCase()}
+                </span>
                 <div>
                   <h5 className="font-bold text-xs text-brand-blue">{test.name}</h5>
                   <p className="text-[10px] text-brand-red font-medium leading-none mt-0.5">{test.role}</p>

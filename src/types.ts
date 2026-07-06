@@ -20,5 +20,4 @@ export interface Testimonial {
   role: string;
   location: string;
   text: string;
-  avatar: string;
 }

@@ -1,30 +1,24 @@
-import { useRef, type ReactNode } from 'react';
+import { useRef, useState, type ReactNode } from 'react';
 import {
   Check,
   Calendar,
   Mail,
-  Phone,
-  Linkedin,
-  Facebook,
-  Instagram,
-  Twitter,
   ArrowRight,
   ArrowDown,
   Clock,
   ChevronRight
 } from 'lucide-react';
-import { motion } from 'motion/react';
-import { InlineWidget } from 'react-calendly';
+import { motion, MotionConfig } from 'motion/react';
 import { SERVICE_PACKAGES } from './data';
-import { CALENDLY_URL } from './config';
 import Header from './components/Header';
 import FAQ from './components/FAQ';
 import About from './components/About';
+import CalendlyBooking from './components/CalendlyBooking';
+import LegalModal, { type LegalTab } from './components/LegalModal';
 
-// Photo du Jet d'eau de Genève (lac Léman) — Unsplash, libre d'usage commercial.
-// Pour utiliser ta propre image : remplace simplement cette URL.
-const HERO_IMAGE =
-  'https://images.unsplash.com/photo-1757584666096-59deb41f1124?auto=format&fit=crop&q=80&w=2000';
+// Photo du Jet d'eau de Genève (lac Léman) — self-hébergée (WebP optimisé),
+// préchargée depuis index.html. Pour changer d'image : remplace public/hero-leman.webp.
+const HERO_IMAGE = '/hero-leman.webp';
 
 // Petit intitulé « eyebrow » réutilisé au-dessus des titres de section
 function Eyebrow({ children, center = false }: { children: ReactNode; center?: boolean }) {
@@ -54,19 +48,30 @@ export default function App() {
     else if (sectionId === 'calendly') targetRef = calendlyRef;
 
     if (targetRef && targetRef.current) {
-      targetRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      targetRef.current.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'start' });
     }
   };
 
   const goToBooking = () => handleNavigate('calendly');
 
+  // Modale légale (Mentions légales & CGU / Politique de confidentialité)
+  const [legalOpen, setLegalOpen] = useState(false);
+  const [legalTab, setLegalTab] = useState<LegalTab>('cgu');
+  const openLegal = (tab: LegalTab) => {
+    setLegalTab(tab);
+    setLegalOpen(true);
+  };
+
   return (
+    <MotionConfig reducedMotion="user">
     <div className="min-h-screen bg-brand-cream text-brand-blue font-sans antialiased selection:bg-brand-red/10 selection:text-brand-red">
       {/* Header / Navbar */}
       <Header onBookClick={goToBooking} onNavigate={handleNavigate} />
 
+      <main>
       {/* ============================ HERO ============================ */}
-      <div
+      <section
         ref={accueilRef}
         id="accueil"
         className="relative min-h-[85vh] md:min-h-[90vh] flex items-center overflow-hidden py-20 md:py-32 bg-cover bg-center bg-no-repeat bg-brand-lightblue grain"
@@ -168,7 +173,7 @@ export default function App() {
             </motion.div>
           </motion.div>
         </div>
-      </div>
+      </section>
 
       {/* ============================ BANDEAU ============================ */}
       <div className="bg-brand-blue text-white py-5 overflow-hidden border-y-2 border-brand-red/60">
@@ -190,7 +195,7 @@ export default function App() {
       </div>
 
       {/* ============================ SERVICES ============================ */}
-      <div ref={servicesRef} id="services" className="py-16 md:py-24 bg-white brand-glow">
+      <section ref={servicesRef} id="services" className="py-16 md:py-24 bg-white brand-glow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
           <motion.div
@@ -315,10 +320,10 @@ export default function App() {
           </div>
 
         </div>
-      </div>
+      </section>
 
       {/* ============================ RENDEZ-VOUS ============================ */}
-      <div ref={calendlyRef} id="calendly" className="py-16 md:py-24 bg-brand-cream border-t border-brand-lightblue/50 brand-glow">
+      <section ref={calendlyRef} id="calendly" className="py-16 md:py-24 bg-brand-cream border-t border-brand-lightblue/50 brand-glow">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
 
           <motion.div
@@ -344,13 +349,13 @@ export default function App() {
             transition={{ duration: 0.5 }}
             className="calendly-frame rounded-3xl border border-brand-lightblue overflow-hidden bg-white shadow-soft-lg"
           >
-            <InlineWidget url={CALENDLY_URL} styles={{ minWidth: '100%', height: '700px' }} />
+            <CalendlyBooking />
           </motion.div>
         </div>
-      </div>
+      </section>
 
       {/* ============================ QUI SOMMES-NOUS ============================ */}
-      <div ref={aboutRef} id="qui-sommes-nous" className="py-16 md:py-24 bg-white border-t border-brand-lightblue/40">
+      <section ref={aboutRef} id="qui-sommes-nous" className="py-16 md:py-24 bg-white border-t border-brand-lightblue/40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
           <motion.div
@@ -371,10 +376,10 @@ export default function App() {
 
           <About />
         </div>
-      </div>
+      </section>
 
       {/* ============================ F.A.Q ============================ */}
-      <div ref={faqRef} id="faq" className="py-16 md:py-24 bg-brand-cream border-t border-brand-lightblue/30 brand-glow">
+      <section ref={faqRef} id="faq" className="py-16 md:py-24 bg-brand-cream border-t border-brand-lightblue/30 brand-glow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
           <motion.div
@@ -395,7 +400,8 @@ export default function App() {
 
           <FAQ />
         </div>
-      </div>
+      </section>
+      </main>
 
       {/* ============================ FOOTER ============================ */}
       <footer className="bg-brand-blue text-white pt-16 pb-8 border-t-2 border-brand-red">
@@ -426,38 +432,19 @@ export default function App() {
               </ul>
             </div>
 
-            {/* Contacts & réseaux */}
+            {/* Contact */}
             <div className="md:col-span-4 space-y-4">
-              <h4 className="text-xs font-bold uppercase tracking-widest text-brand-red">Suivez-nous sur nos réseaux</h4>
+              <h4 className="text-xs font-bold uppercase tracking-widest text-brand-red">Nous contacter</h4>
 
-              <div className="flex gap-3">
-                {[
-                  { Icon: Linkedin, href: 'https://linkedin.com/company/ncf-accompagnement', title: 'LinkedIn' },
-                  { Icon: Facebook, href: 'https://facebook.com/ncf-accompagnement', title: 'Facebook' },
-                  { Icon: Instagram, href: 'https://instagram.com/ncf-accompagnement', title: 'Instagram' },
-                  { Icon: Twitter, href: 'https://twitter.com/ncf', title: 'X (Twitter)' },
-                ].map(({ Icon, href, title }) => (
-                  <a
-                    key={title}
-                    href={href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-10 h-10 bg-white/10 hover:bg-brand-red hover:text-white text-brand-lightblue rounded-xl flex items-center justify-center transition-all hover:-translate-y-0.5"
-                    title={title}
-                  >
-                    <Icon className="w-4 h-4" />
-                  </a>
-                ))}
-              </div>
-
-              <div className="space-y-1.5 pt-2 text-sm text-brand-lightblue/90">
+              <div className="space-y-1.5 text-sm text-brand-lightblue/90">
                 <p className="flex items-center gap-2">
                   <Mail className="w-3.5 h-3.5 text-brand-red shrink-0" />
-                  <span>contact@ncf-accompagnement.fr</span>
+                  <a href="mailto:contact@ncf-accompagnement.fr" className="hover:text-white transition-all">
+                    contact@ncf-accompagnement.fr
+                  </a>
                 </p>
-                <p className="flex items-center gap-2">
-                  <Phone className="w-3.5 h-3.5 text-brand-red shrink-0" />
-                  <span>CH : +41 (0) 22 552 14 00 | FR : +33 (0) 4 50 12 00 00</span>
+                <p className="text-xs text-brand-lightblue/70 leading-relaxed pt-1">
+                  Bassin genevois & Haute-Savoie — réponse sous 24 h ouvrées. Le plus simple reste de réserver directement un créneau découverte gratuit dans notre agenda.
                 </p>
               </div>
             </div>
@@ -467,14 +454,17 @@ export default function App() {
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-[10px] text-brand-lightblue/80">
             <p>© {new Date().getFullYear()} Né côté frontière — Accompagnement Frontalier. Tous droits réservés.</p>
             <div className="flex gap-4">
-              <a href="#accueil" className="hover:underline">Mentions Légales</a>
-              <a href="#accueil" className="hover:underline">Politique de Confidentialité</a>
-              <a href="#accueil" className="hover:underline">CGV</a>
+              <button onClick={() => openLegal('cgu')} className="hover:underline cursor-pointer">Mentions Légales & CGU</button>
+              <button onClick={() => openLegal('privacy')} className="hover:underline cursor-pointer">Politique de Confidentialité</button>
             </div>
           </div>
 
         </div>
       </footer>
+
+      {/* Modale légale */}
+      <LegalModal isOpen={legalOpen} initialTab={legalTab} onClose={() => setLegalOpen(false)} />
     </div>
+    </MotionConfig>
   );
 }
