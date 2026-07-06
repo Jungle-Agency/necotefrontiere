@@ -13,10 +13,17 @@ import { SERVICE_PACKAGES } from './data';
 import Header from './components/Header';
 import FAQ from './components/FAQ';
 import About from './components/About';
-import CalendlyBooking from './components/CalendlyBooking';
+import BookingWizard, { type Objective } from './components/BookingWizard';
 import LegalModal, { type LegalTab } from './components/LegalModal';
-import BorderLine from './components/BorderLine';
 import HowItWorks from './components/HowItWorks';
+
+// Le bouton d'une offre pré-remplit le parcours de prise de rendez-vous
+const PKG_OBJECTIVE: Record<string, Objective> = {
+  'cv-boost': 'cv',
+  'cv-boost-coaching': 'cv',
+  travail: 'emploi',
+  installation: 'installation'
+};
 
 // Photo du Jet d'eau de Genève (lac Léman) — self-hébergée (WebP optimisé),
 // préchargée depuis index.html. Pour changer d'image : remplace public/hero-leman.webp.
@@ -55,7 +62,12 @@ export default function App() {
     }
   };
 
-  const goToBooking = () => handleNavigate('calendly');
+  // Objectif transmis au parcours de RDV (pré-rempli selon le bouton cliqué)
+  const [bookingObjective, setBookingObjective] = useState<Objective | null>(null);
+  const goToBooking = (objective?: Objective) => {
+    if (objective) setBookingObjective(objective);
+    handleNavigate('calendly');
+  };
 
   // Modale légale (Mentions légales & CGU / Politique de confidentialité)
   const [legalOpen, setLegalOpen] = useState(false);
@@ -69,10 +81,7 @@ export default function App() {
     <MotionConfig reducedMotion="user">
     <div className="min-h-screen bg-brand-cream text-brand-blue font-sans antialiased selection:bg-brand-red/10 selection:text-brand-red">
       {/* Header / Navbar */}
-      <Header onBookClick={goToBooking} onNavigate={handleNavigate} />
-
-      {/* Ligne de frontière — élément signature, se dessine au scroll */}
-      <BorderLine />
+      <Header onBookClick={() => goToBooking('decouverte')} onNavigate={handleNavigate} />
 
       <main>
       {/* ============================ HERO ============================ */}
@@ -146,7 +155,7 @@ export default function App() {
               className="flex flex-col sm:flex-row gap-3 pt-2"
             >
               <button
-                onClick={goToBooking}
+                onClick={() => goToBooking('decouverte')}
                 className="group bg-brand-red hover:bg-brand-red/90 text-white font-bold text-sm px-8 py-4 rounded-2xl shadow-red hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Calendar className="w-4 h-4" />
@@ -199,7 +208,7 @@ export default function App() {
       </div>
 
       {/* ============================ COMMENT ÇA SE PASSE ============================ */}
-      <HowItWorks onBookClick={goToBooking} />
+      <HowItWorks onBookClick={() => goToBooking('decouverte')} />
 
       {/* ============================ SERVICES ============================ */}
       <section ref={servicesRef} id="services" className="py-16 md:py-24 bg-white brand-glow">
@@ -255,7 +264,7 @@ export default function App() {
                 </p>
               </div>
               <button
-                onClick={goToBooking}
+                onClick={() => goToBooking('decouverte')}
                 className="shrink-0 bg-brand-red hover:bg-brand-red/90 text-white font-bold text-sm px-7 py-4 rounded-2xl shadow-red hover:-translate-y-0.5 transition-all flex items-center gap-2 cursor-pointer"
               >
                 Prendre RDV gratuit
@@ -321,7 +330,7 @@ export default function App() {
                   </div>
 
                   <button
-                    onClick={goToBooking}
+                    onClick={() => goToBooking(PKG_OBJECTIVE[pkg.id])}
                     className={`mt-7 w-full py-3.5 rounded-xl text-xs font-bold uppercase tracking-wide flex items-center justify-center gap-1.5 transition-all hover:-translate-y-0.5 cursor-pointer ${
                       isPopular
                         ? 'bg-brand-red text-white shadow-red'
@@ -352,10 +361,10 @@ export default function App() {
           >
             <div className="flex justify-center"><Eyebrow center>Prise de rendez-vous</Eyebrow></div>
             <h2 className="text-4xl md:text-5xl font-display font-black text-brand-blue tracking-[-0.02em] leading-[1.05] text-balance">
-              Réservez votre créneau en ligne
+              Préparons votre rendez-vous
             </h2>
             <p className="text-base text-gray-600 leading-relaxed">
-              Choisissez le moment qui vous convient directement dans notre agenda. Confirmation immédiate, sans engagement.
+              Deux questions pour personnaliser votre premier échange, puis choisissez votre créneau. Confirmation immédiate, sans engagement.
             </p>
           </motion.div>
 
@@ -366,7 +375,7 @@ export default function App() {
             transition={{ duration: 0.5 }}
             className="calendly-frame rounded-3xl border border-brand-lightblue overflow-hidden bg-white shadow-soft-lg"
           >
-            <CalendlyBooking />
+            <BookingWizard initialObjective={bookingObjective} />
           </motion.div>
         </div>
       </section>
@@ -445,7 +454,7 @@ export default function App() {
                 <li><button onClick={() => handleNavigate('services')} className="hover:text-white transition-all">Nos Tarifs & Packs</button></li>
                 <li><button onClick={() => handleNavigate('qui-sommes-nous')} className="hover:text-white transition-all">Qui sommes-nous ?</button></li>
                 <li><button onClick={() => handleNavigate('faq')} className="hover:text-white transition-all">F.A.Q Frontalière</button></li>
-                <li><button onClick={goToBooking} className="hover:text-white transition-all">Prendre rendez-vous via Calendly</button></li>
+                <li><button onClick={() => goToBooking()} className="hover:text-white transition-all">Prendre rendez-vous via Calendly</button></li>
               </ul>
             </div>
 
