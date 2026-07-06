@@ -73,7 +73,7 @@ export default function Header({ onBookClick, onNavigate }: HeaderProps) {
             <button
               onClick={onBookClick}
               className="bg-brand-red hover:bg-brand-red/90 text-white p-2.5 rounded-full shadow-red flex items-center justify-center transition-all cursor-pointer"
-              title="Prendre rendez-vous via Calendly"
+              title="Prendre rendez-vous"
             >
               <CalendarCheck className="w-4 h-4" />
             </button>

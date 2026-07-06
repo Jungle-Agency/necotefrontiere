@@ -46,7 +46,7 @@ export default function App() {
   const servicesRef = useRef<HTMLDivElement>(null);
   const aboutRef = useRef<HTMLDivElement>(null);
   const faqRef = useRef<HTMLDivElement>(null);
-  const calendlyRef = useRef<HTMLDivElement>(null);
+  const rdvRef = useRef<HTMLDivElement>(null);
 
   const handleNavigate = (sectionId: string) => {
     let targetRef;
@@ -54,7 +54,7 @@ export default function App() {
     else if (sectionId === 'services') targetRef = servicesRef;
     else if (sectionId === 'qui-sommes-nous') targetRef = aboutRef;
     else if (sectionId === 'faq') targetRef = faqRef;
-    else if (sectionId === 'calendly') targetRef = calendlyRef;
+    else if (sectionId === 'rdv') targetRef = rdvRef;
 
     if (targetRef && targetRef.current) {
       const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -66,7 +66,7 @@ export default function App() {
   const [bookingObjective, setBookingObjective] = useState<Objective | null>(null);
   const goToBooking = (objective?: Objective) => {
     if (objective) setBookingObjective(objective);
-    handleNavigate('calendly');
+    handleNavigate('rdv');
   };
 
   // Modale légale (Mentions légales & CGU / Politique de confidentialité)
@@ -177,7 +177,7 @@ export default function App() {
               transition={{ duration: 0.6, delay: 0.65 }}
               className="flex flex-wrap items-center gap-x-5 gap-y-2 pt-3 text-xs font-semibold text-brand-blue/80"
             >
-              {['RDV en ligne immédiat', 'Sans engagement', 'Conseils de terrain, sans intermédiaire'].map((t, i) => (
+              {['Demande de RDV en 2 minutes', 'Sans engagement', 'Conseils de terrain, sans intermédiaire'].map((t, i) => (
                 <span key={i} className="flex items-center gap-1.5">
                   <Check className="w-3.5 h-3.5 text-brand-red stroke-[3]" />
                   {t}
@@ -226,7 +226,7 @@ export default function App() {
               Des offres adaptées à chaque étape de votre projet suisse
             </h2>
             <p className="text-base text-gray-600 leading-relaxed text-pretty">
-              Choisissez la formule qui correspond à vos besoins et prenez rendez-vous instantanément en sélectionnant un créneau directement dans notre agenda Calendly.
+              Choisissez la formule qui correspond à vos besoins et proposez vos créneaux directement en ligne — nous confirmons votre rendez-vous sous 24 h ouvrées.
             </p>
           </motion.div>
 
@@ -349,7 +349,7 @@ export default function App() {
       </section>
 
       {/* ============================ RENDEZ-VOUS ============================ */}
-      <section ref={calendlyRef} id="calendly" className="py-16 md:py-24 bg-brand-cream border-t border-brand-lightblue/50 brand-glow">
+      <section ref={rdvRef} id="rdv" className="py-16 md:py-24 bg-brand-cream border-t border-brand-lightblue/50 brand-glow">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
 
           <motion.div
@@ -364,7 +364,7 @@ export default function App() {
               Préparons votre rendez-vous
             </h2>
             <p className="text-base text-gray-600 leading-relaxed">
-              Deux questions pour personnaliser votre premier échange, puis choisissez votre créneau. Confirmation immédiate, sans engagement.
+              Deux questions pour personnaliser votre premier échange, proposez vos disponibilités — nous confirmons votre créneau par email sous 24 h ouvrées. Sans engagement.
             </p>
           </motion.div>
 
@@ -373,7 +373,7 @@ export default function App() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-50px' }}
             transition={{ duration: 0.5 }}
-            className="calendly-frame rounded-3xl border border-brand-lightblue overflow-hidden bg-white shadow-soft-lg"
+            className="rounded-3xl border border-brand-lightblue overflow-hidden bg-white shadow-soft-lg"
           >
             <BookingWizard initialObjective={bookingObjective} />
           </motion.div>
@@ -454,7 +454,7 @@ export default function App() {
                 <li><button onClick={() => handleNavigate('services')} className="hover:text-white transition-all">Nos Tarifs & Packs</button></li>
                 <li><button onClick={() => handleNavigate('qui-sommes-nous')} className="hover:text-white transition-all">Qui sommes-nous ?</button></li>
                 <li><button onClick={() => handleNavigate('faq')} className="hover:text-white transition-all">F.A.Q Frontalière</button></li>
-                <li><button onClick={() => goToBooking()} className="hover:text-white transition-all">Prendre rendez-vous via Calendly</button></li>
+                <li><button onClick={() => goToBooking()} className="hover:text-white transition-all">Prendre rendez-vous en ligne</button></li>
               </ul>
             </div>
 

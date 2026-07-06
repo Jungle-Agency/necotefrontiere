@@ -1,2 +1,2 @@
-// Lien Calendly utilisé pour toutes les prises de rendez-vous du site.
-export const CALENDLY_URL = 'https://calendly.com/aj-74100/30min';
+// Adresse email qui reçoit les demandes de rendez-vous du site.
+export const CONTACT_EMAIL = 'contact@ncf-accompagnement.fr';

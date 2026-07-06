@@ -67,9 +67,10 @@ function CGUContent() {
 
       <h2>6. Prise de rendez-vous</h2>
       <p>
-        Le Site intègre l’outil de réservation en ligne Calendly permettant aux utilisateurs de
-        prendre rendez-vous avec NCF. Les informations communiquées lors de la réservation sont
-        traitées conformément à notre Politique de Confidentialité ainsi qu’à celle de Calendly.
+        Le Site propose un module de demande de rendez-vous. Les informations que vous y
+        renseignez restent dans votre navigateur et ne nous sont transmises — par email, depuis
+        votre propre messagerie — que lorsque vous validez l’envoi de votre demande. Elles sont
+        traitées conformément à notre Politique de Confidentialité.
       </p>
 
       <h2>7. Responsabilité</h2>
@@ -132,7 +133,7 @@ function PrivacyContent() {
 
       <h2>3. Données collectées</h2>
       <h3>3.1 Données communiquées volontairement</h3>
-      <p>Lorsque vous prenez rendez-vous via l’agenda en ligne (Calendly), nous pouvons collecter :</p>
+      <p>Lorsque vous nous adressez une demande de rendez-vous via le Site, nous pouvons collecter :</p>
       <ul>
         <li>Nom et prénom</li>
         <li>Adresse email</li>
@@ -173,7 +174,7 @@ function PrivacyContent() {
         être partagées uniquement avec :
       </p>
       <ul>
-        <li>Nos prestataires techniques (hébergement, prise de rendez-vous en ligne — Calendly LLC) dans la mesure strictement nécessaire</li>
+        <li>Nos prestataires techniques (hébergement) dans la mesure strictement nécessaire</li>
         <li>Les autorités compétentes en cas d’obligation légale</li>
       </ul>
 
@@ -189,10 +190,9 @@ function PrivacyContent() {
 
       <h2>8. Cookies</h2>
       <p>
-        Le Site n’utilise pas de cookie publicitaire ni de traceur tiers par défaut. L’agenda de
-        réservation Calendly (service tiers susceptible de déposer des cookies) n’est chargé
-        qu’après votre action explicite pour l’afficher. Vous pouvez par ailleurs configurer votre
-        navigateur pour refuser les cookies.
+        Le Site n’utilise pas de cookie publicitaire ni de traceur tiers, et ne charge aucun
+        service tiers de suivi. Vous pouvez par ailleurs configurer votre navigateur pour refuser
+        les cookies.
       </p>
 
       <h2>9. Vos droits</h2>
@@ -218,8 +218,8 @@ function PrivacyContent() {
       <p>
         Les données personnelles sont stockées et traitées en France, en Suisse ou dans l’Espace
         Économique Européen (EEE). En cas de transfert vers un pays ne bénéficiant pas d’un niveau
-        de protection adéquat (notamment via Calendly, société américaine), des garanties
-        appropriées (clauses contractuelles types) sont mises en place.
+        de protection adéquat, des garanties appropriées (clauses contractuelles types) seront
+        mises en place.
       </p>
 
       <h2>12. Modification de la politique</h2>

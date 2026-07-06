@@ -75,19 +75,6 @@
   mix-blend-mode: multiply;
 }
 
-/* Widget Calendly : plus haut sur mobile pour aérer le sélecteur date/heure,
-   hauteur desktop conservée */
-.calendly-frame .calendly-inline-widget,
-.calendly-frame .calendly-inline-widget iframe {
-  height: 1040px !important;
-}
-@media (min-width: 768px) {
-  .calendly-frame .calendly-inline-widget,
-  .calendly-frame .calendly-inline-widget iframe {
-    height: 700px !important;
-  }
-}
-
 /* ———————————— Contenu légal (modale CGU / Confidentialité) ———————————— */
 .legal-content h2 {
   font-family: var(--font-display);
