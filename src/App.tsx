@@ -513,8 +513,8 @@ export default function App() {
               <div className="space-y-1.5 text-sm text-brand-lightblue/90">
                 <p className="flex items-center gap-2">
                   <Mail className="w-3.5 h-3.5 text-brand-red shrink-0" />
-                  <a href="mailto:contact@ncf-accompagnement.fr" className="hover:text-white transition-all">
-                    contact@ncf-accompagnement.fr
+                  <a href="mailto:cassepastatete1209@gmail.com" className="hover:text-white transition-all">
+                    cassepastatete1209@gmail.com
                   </a>
                 </p>
                 <p className="flex items-center gap-2">

@@ -30,7 +30,7 @@ function CGUContent() {
         <li><strong>Directeur de la publication :</strong> le représentant légal de Né côté frontière</li>
         <li><strong>Hébergeur :</strong> Vercel Inc., 440 N Barranca Ave #4133, Covina, CA 91723, États-Unis — vercel.com</li>
         <li><strong>Siège :</strong> Bassin genevois (Annemasse — Genève)</li>
-        <li><strong>Email :</strong> contact@ncf-accompagnement.fr</li>
+        <li><strong>Email :</strong> cassepastatete1209@gmail.com</li>
         <li><strong>Téléphone :</strong> 06 85 81 36 83</li>
       </ul>
 
@@ -135,7 +135,7 @@ function PrivacyContent() {
       <ul>
         <li><strong>Raison sociale :</strong> Né côté frontière (NCF)</li>
         <li><strong>Siège :</strong> Bassin genevois (Annemasse — Genève)</li>
-        <li><strong>Email :</strong> contact@ncf-accompagnement.fr</li>
+        <li><strong>Email :</strong> cassepastatete1209@gmail.com</li>
         <li><strong>Téléphone :</strong> 06 85 81 36 83</li>
       </ul>
 
@@ -216,7 +216,7 @@ function PrivacyContent() {
         <li><strong>Droit d’opposition :</strong> vous opposer au traitement de vos données</li>
         <li><strong>Droit de retrait du consentement :</strong> retirer votre consentement à tout moment</li>
       </ul>
-      <p>Pour exercer ces droits, contactez-nous à : <strong>contact@ncf-accompagnement.fr</strong></p>
+      <p>Pour exercer ces droits, contactez-nous à : <strong>cassepastatete1209@gmail.com</strong></p>
 
       <h2>10. Sécurité</h2>
       <p>
@@ -242,7 +242,7 @@ function PrivacyContent() {
       <h2>13. Contact</h2>
       <p>
         Pour toute question relative à la présente Politique de Confidentialité, vous pouvez nous
-        contacter à : <strong>contact@ncf-accompagnement.fr</strong>
+        contacter à : <strong>cassepastatete1209@gmail.com</strong>
       </p>
     </div>
   );

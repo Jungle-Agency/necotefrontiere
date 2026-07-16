@@ -1,5 +1,5 @@
 // Adresse email qui reçoit les demandes de rendez-vous du site.
-export const CONTACT_EMAIL = 'contact@ncf-accompagnement.fr';
+export const CONTACT_EMAIL = 'cassepastatete1209@gmail.com';
 
 // Clé d'accès Web3Forms (https://web3forms.com) : envoi du formulaire en arrière-plan,
 // sans que le visiteur ait besoin d'une messagerie configurée.
