@@ -24,8 +24,14 @@ function CGUContent() {
       </p>
       <ul>
         <li><strong>Raison sociale :</strong> Né côté frontière (NCF)</li>
+        <li><strong>Forme juridique :</strong> Entrepreneur individuel (micro-entreprise)</li>
+        {/* TODO : remplacer par le numéro SIRET dès réception de l'immatriculation */}
+        <li><strong>SIRET :</strong> immatriculation en cours</li>
+        <li><strong>Directeur de la publication :</strong> le représentant légal de Né côté frontière</li>
+        <li><strong>Hébergeur :</strong> Vercel Inc., 440 N Barranca Ave #4133, Covina, CA 91723, États-Unis — vercel.com</li>
         <li><strong>Siège :</strong> Bassin genevois (Annemasse — Genève)</li>
         <li><strong>Email :</strong> contact@ncf-accompagnement.fr</li>
+        <li><strong>Téléphone :</strong> 06 85 81 36 83</li>
       </ul>
 
       <h2>2. Objet</h2>
@@ -68,9 +74,10 @@ function CGUContent() {
       <h2>6. Prise de rendez-vous</h2>
       <p>
         Le Site propose un module de demande de rendez-vous. Les informations que vous y
-        renseignez restent dans votre navigateur et ne nous sont transmises — par email, depuis
-        votre propre messagerie — que lorsque vous validez l’envoi de votre demande. Elles sont
-        traitées conformément à notre Politique de Confidentialité.
+        renseignez restent dans votre navigateur et ne nous sont transmises que lorsque vous
+        validez l’envoi de votre demande — par email ou via notre prestataire technique
+        d’acheminement de formulaires. Elles sont traitées conformément à notre Politique de
+        Confidentialité.
       </p>
 
       <h2>7. Responsabilité</h2>
@@ -129,6 +136,7 @@ function PrivacyContent() {
         <li><strong>Raison sociale :</strong> Né côté frontière (NCF)</li>
         <li><strong>Siège :</strong> Bassin genevois (Annemasse — Genève)</li>
         <li><strong>Email :</strong> contact@ncf-accompagnement.fr</li>
+        <li><strong>Téléphone :</strong> 06 85 81 36 83</li>
       </ul>
 
       <h2>3. Données collectées</h2>
@@ -174,7 +182,7 @@ function PrivacyContent() {
         être partagées uniquement avec :
       </p>
       <ul>
-        <li>Nos prestataires techniques (hébergement) dans la mesure strictement nécessaire</li>
+        <li>Nos prestataires techniques (hébergement, acheminement des formulaires) dans la mesure strictement nécessaire</li>
         <li>Les autorités compétentes en cas d’obligation légale</li>
       </ul>
 

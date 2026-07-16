@@ -26,7 +26,10 @@
       content="CV aux normes suisses, recherche d'emploi à Genève, installation frontalière sans erreurs administratives. Rendez-vous découverte gratuit de 20 minutes."
     />
     <meta property="og:url" content="https://www.ncf-accompagnement.fr/" />
-    <meta property="og:image" content="https://www.ncf-accompagnement.fr/hero-leman.webp" />
+    <meta property="og:image" content="https://www.ncf-accompagnement.fr/og-image.jpg" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="Le Jet d'eau de Genève sur le lac Léman" />
 
     <!-- Twitter Card -->
@@ -36,10 +39,14 @@
       name="twitter:description"
       content="CV aux normes suisses, recherche d'emploi à Genève, installation frontalière. RDV découverte gratuit."
     />
-    <meta name="twitter:image" content="https://www.ncf-accompagnement.fr/hero-leman.webp" />
+    <meta name="twitter:image" content="https://www.ncf-accompagnement.fr/og-image.jpg" />
 
     <!-- Préchargement de l'image hero (LCP) -->
     <link rel="preload" as="image" href="/hero-leman.webp" type="image/webp" fetchpriority="high" />
+
+    <!-- Préchargement des polices du hero (auto-hébergées, voir src/index.css) -->
+    <link rel="preload" as="font" href="/fonts/archivo-latin.woff2" type="font/woff2" crossorigin />
+    <link rel="preload" as="font" href="/fonts/caveat-latin.woff2" type="font/woff2" crossorigin />
 
     <!-- Données structurées : activité locale -->
     <script type="application/ld+json">
@@ -50,6 +57,11 @@
       "description": "Service d'accompagnement des travailleurs frontaliers France-Suisse : optimisation de CV aux normes helvétiques, recherche d'emploi à Genève et en Suisse romande, installation frontalière (assurance LAMal/CMU, fiscalité, banque).",
       "url": "https://www.ncf-accompagnement.fr/",
       "email": "contact@ncf-accompagnement.fr",
+      "telephone": "+33685813683",
+      "sameAs": [
+        "https://www.facebook.com/share/1Eki7MXbde/",
+        "https://www.tiktok.com/@ncfconseil"
+      ],
       "image": "https://www.ncf-accompagnement.fr/logo-ncf-256.png",
       "priceRange": "119€ - 400€",
       "areaServed": [

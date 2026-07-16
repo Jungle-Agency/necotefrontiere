@@ -27,17 +27,22 @@ export default function Header({ onBookClick, onNavigate }: HeaderProps) {
         <div className="flex justify-between items-center h-20">
 
           {/* Logo Brand */}
-          <div className="flex items-center gap-2.5 cursor-pointer" onClick={() => handleNavClick('accueil')}>
+          <button
+            type="button"
+            onClick={() => handleNavClick('accueil')}
+            aria-label="Retour à l'accueil"
+            className="flex items-center gap-2.5 cursor-pointer text-left"
+          >
             <img
               src="/logo-ncf-256.png"
-              alt="Logo Né côté frontière"
+              alt=""
               className="h-10 w-auto select-none"
             />
-            <div className="flex flex-col">
+            <span className="flex flex-col">
               <span className="text-base sm:text-lg font-display font-extrabold text-brand-blue tracking-tight leading-none">Né côté frontière</span>
               <span className="hidden sm:block text-[9px] font-bold text-brand-red uppercase tracking-wider mt-1">Conseils frontaliers FR / CH</span>
-            </div>
-          </div>
+            </span>
+          </button>
 
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-8 text-sm font-semibold text-brand-blue">
@@ -79,6 +84,8 @@ export default function Header({ onBookClick, onNavigate }: HeaderProps) {
             </button>
             <button
               onClick={() => setIsOpen(!isOpen)}
+              aria-label={isOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
+              aria-expanded={isOpen}
               className="text-brand-blue p-2 hover:bg-brand-cream rounded-lg transition-all"
             >
               {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}

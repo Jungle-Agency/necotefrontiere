@@ -10,12 +10,13 @@ import {
   Copy,
   FileText,
   Home,
+  Loader2,
   Mail,
   Send,
   Sparkles,
   X
 } from 'lucide-react';
-import { CONTACT_EMAIL } from '../config';
+import { CONTACT_EMAIL, WEB3FORMS_ACCESS_KEY } from '../config';
 
 export type Objective = 'decouverte' | 'cv' | 'emploi' | 'installation';
 
@@ -105,9 +106,29 @@ function dayLabel(d: Date) {
   return d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
 }
 
+/* Un créneau proposé : jour (timestamp à minuit) + période de la journée.
+   Conservés triés chronologiquement pour le récapitulatif. */
+interface Slot {
+  day: number;
+  period: string;
+}
+function slotLabel(s: Slot) {
+  return `${dayLabel(new Date(s.day))} — ${s.period}`;
+}
+/* Avec l'année : le récapitulatif envoyé par email doit rester sans ambiguïté. */
+function slotLabelFull(s: Slot) {
+  const label = new Date(s.day).toLocaleDateString('fr-FR', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  });
+  return `${label} — ${s.period}`;
+}
+
 function StepDots({ step }: { step: 1 | 2 | 3 | 4 }) {
   return (
-    <div className="flex items-center justify-center gap-0">
+    <div role="group" aria-label={`Étape ${step} sur 4`} className="flex items-center justify-center gap-0">
       {[1, 2, 3, 4].map((n, i) => (
         <div key={n} className="flex items-center">
           {i > 0 && <span className="w-6 sm:w-10 border-t-2 border-dashed border-brand-red/30" />}
@@ -141,12 +162,17 @@ export default function BookingWizard({ initialObjective = null }: BookingWizard
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [objective, setObjective] = useState<Objective | null>(null);
   const [situation, setSituation] = useState<string | null>(null);
-  const [slots, setSlots] = useState<string[]>([]);
+  const [slots, setSlots] = useState<Slot[]>([]);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [message, setMessage] = useState('');
-  const [sent, setSent] = useState(false);
+  /* 'api' : envoyé en arrière-plan (Web3Forms) — 'mailto' : via la messagerie du visiteur */
+  const [sent, setSent] = useState<false | 'api' | 'mailto'>(false);
+  const [sending, setSending] = useState(false);
+  const [sendError, setSendError] = useState(false);
+  /* Champ invisible pour les visiteurs : seul un robot le remplit (anti-spam) */
+  const [honeypot, setHoneypot] = useState('');
   const [copied, setCopied] = useState(false);
 
   // Vue calendrier (étape 3)
@@ -173,8 +199,7 @@ export default function BookingWizard({ initialObjective = null }: BookingWizard
   const canPrev = viewMonth.getTime() > firstOfMonth(minDay).getTime();
   const canNext = new Date(viewMonth.getFullYear(), viewMonth.getMonth() + 1, 1).getTime() <= firstOfMonth(maxDay).getTime();
 
-  const slotOf = (d: Date, period: string) => `${dayLabel(d)} — ${period}`;
-  const daySlotCount = (d: Date) => PERIODS.filter((p) => slots.includes(slotOf(d, p))).length;
+  const daySlotCount = (d: Date) => slots.filter((s) => s.day === d.getTime()).length;
 
   // Un clic sur le bouton d'une offre pré-remplit le projet et saute l'étape 1
   useEffect(() => {
@@ -184,11 +209,15 @@ export default function BookingWizard({ initialObjective = null }: BookingWizard
     }
   }, [initialObjective]);
 
-  const toggleSlot = (slot: string) => {
+  const toggleSlot = (day: number, period: string) => {
     setSlots((prev) => {
-      if (prev.includes(slot)) return prev.filter((s) => s !== slot);
+      if (prev.some((s) => s.day === day && s.period === period)) {
+        return prev.filter((s) => !(s.day === day && s.period === period));
+      }
       if (prev.length >= MAX_SLOTS) return prev;
-      return [...prev, slot];
+      return [...prev, { day, period }].sort(
+        (a, b) => a.day - b.day || PERIODS.indexOf(a.period) - PERIODS.indexOf(b.period)
+      );
     });
   };
 
@@ -204,7 +233,7 @@ export default function BookingWizard({ initialObjective = null }: BookingWizard
     `• Mon projet : ${objectiveLabel}`,
     `• Ma situation : ${situation ?? '—'}`,
     '• Mes disponibilités :',
-    ...slots.map((s) => `   - ${s}`),
+    ...slots.map((s) => `   - ${slotLabelFull(s)}`),
     '',
     `Nom : ${name.trim()}`,
     `Email : ${email.trim()}`,
@@ -214,10 +243,41 @@ export default function BookingWizard({ initialObjective = null }: BookingWizard
     '— Envoyé depuis le site Né côté frontière'
   ].join('\n');
 
-  const sendRequest = () => {
-    const subject = `Demande de RDV découverte — ${name.trim()}`;
+  const subject = `Demande de RDV découverte — ${name.trim()}`;
+
+  const sendViaMailto = () => {
     window.location.href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(recapText)}`;
-    setSent(true);
+    setSent('mailto');
+  };
+
+  const sendRequest = async () => {
+    if (!WEB3FORMS_ACCESS_KEY) {
+      sendViaMailto();
+      return;
+    }
+    setSending(true);
+    setSendError(false);
+    try {
+      const res = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          access_key: WEB3FORMS_ACCESS_KEY,
+          subject,
+          from_name: name.trim(),
+          email: email.trim(),
+          botcheck: honeypot,
+          message: recapText
+        })
+      });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.message);
+      setSent('api');
+    } catch {
+      setSendError(true);
+    } finally {
+      setSending(false);
+    }
   };
 
   const copyRecap = async () => {
@@ -239,11 +299,12 @@ export default function BookingWizard({ initialObjective = null }: BookingWizard
             <Check className="w-7 h-7 text-brand-blue stroke-[3]" />
           </span>
           <h3 className="text-xl md:text-2xl font-display font-black text-brand-blue tracking-tight">
-            Votre demande est prête
+            {sent === 'api' ? 'Votre demande est envoyée !' : 'Votre demande est prête'}
           </h3>
           <p className="text-sm text-gray-600 leading-relaxed max-w-md">
-            Votre messagerie s’est ouverte avec le récapitulatif ci-dessous — il ne reste qu’à
-            l’envoyer. Nous confirmons votre créneau par email sous 24 h ouvrées.
+            {sent === 'api'
+              ? 'Nous avons bien reçu votre demande — voici votre récapitulatif. Nous confirmons votre créneau par email sous 24 h ouvrées.'
+              : 'Votre messagerie s’est ouverte avec le récapitulatif ci-dessous — il ne reste qu’à l’envoyer. Nous confirmons votre créneau par email sous 24 h ouvrées.'}
           </p>
         </div>
 
@@ -268,9 +329,11 @@ export default function BookingWizard({ initialObjective = null }: BookingWizard
           </a>
         </div>
 
-        <p className="text-center text-[11px] text-gray-500">
-          La messagerie ne s’est pas ouverte ? Copiez le récapitulatif et envoyez-le nous directement.
-        </p>
+        {sent === 'mailto' && (
+          <p className="text-center text-[11px] text-gray-500">
+            La messagerie ne s’est pas ouverte ? Copiez le récapitulatif et envoyez-le nous directement.
+          </p>
+        )}
 
         <div className="text-center">
           <button
@@ -405,6 +468,8 @@ export default function BookingWizard({ initialObjective = null }: BookingWizard
                       key={d.getTime()}
                       onClick={() => selectable && setSelectedDay(d)}
                       disabled={!selectable}
+                      aria-label={dayLabel(d)}
+                      aria-pressed={isSelected}
                       className={`relative aspect-square rounded-xl text-sm font-semibold transition-all cursor-pointer disabled:cursor-default ${
                         isSelected
                           ? 'bg-brand-blue text-white shadow-soft'
@@ -435,14 +500,16 @@ export default function BookingWizard({ initialObjective = null }: BookingWizard
                     <p className="text-sm font-bold text-brand-blue capitalize">{dayLabel(selectedDay)}</p>
                     <div className="flex flex-wrap gap-2">
                       {PERIODS.map((period) => {
-                        const slot = slotOf(selectedDay, period);
-                        const active = slots.includes(slot);
+                        const active = slots.some(
+                          (s) => s.day === selectedDay.getTime() && s.period === period
+                        );
                         const full = !active && slots.length >= MAX_SLOTS;
                         return (
                           <button
                             key={period}
-                            onClick={() => toggleSlot(slot)}
+                            onClick={() => toggleSlot(selectedDay.getTime(), period)}
                             disabled={full}
+                            aria-pressed={active}
                             className={`text-xs font-semibold px-3.5 py-2 rounded-full border transition-all cursor-pointer disabled:opacity-35 disabled:cursor-not-allowed ${
                               active
                                 ? 'bg-brand-blue border-brand-blue text-white'
@@ -471,13 +538,13 @@ export default function BookingWizard({ initialObjective = null }: BookingWizard
                   <ul className="space-y-1.5">
                     {slots.map((s) => (
                       <li
-                        key={s}
+                        key={`${s.day}-${s.period}`}
                         className="flex items-center justify-between gap-2 bg-brand-cream border border-brand-lightblue rounded-xl px-3 py-2 text-xs font-semibold text-brand-blue capitalize"
                       >
-                        {s}
+                        {slotLabel(s)}
                         <button
-                          onClick={() => toggleSlot(s)}
-                          aria-label={`Retirer le créneau ${s}`}
+                          onClick={() => toggleSlot(s.day, s.period)}
+                          aria-label={`Retirer le créneau ${slotLabel(s)}`}
                           className="shrink-0 w-5 h-5 rounded-full bg-white text-brand-blue/60 hover:text-brand-red flex items-center justify-center transition-colors cursor-pointer"
                         >
                           <X className="w-3 h-3" />
@@ -520,7 +587,7 @@ export default function BookingWizard({ initialObjective = null }: BookingWizard
               </p>
               <p className="text-sm text-gray-600 leading-relaxed">{RECOMMENDATIONS[objective].detail}</p>
               <p className="text-xs text-gray-500 pt-1">
-                Vos créneaux : {slots.join(' · ')}
+                Vos créneaux : {slots.map(slotLabel).join(' · ')}
               </p>
             </div>
           </div>
@@ -531,6 +598,8 @@ export default function BookingWizard({ initialObjective = null }: BookingWizard
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Votre nom *"
+              aria-label="Votre nom (obligatoire)"
+              aria-required="true"
               autoComplete="name"
               className="w-full bg-white border-2 border-brand-lightblue focus:border-brand-blue rounded-2xl px-4 py-3.5 text-sm text-brand-blue placeholder-gray-400 outline-none transition-colors"
             />
@@ -539,6 +608,9 @@ export default function BookingWizard({ initialObjective = null }: BookingWizard
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Votre email *"
+              aria-label="Votre email (obligatoire)"
+              aria-required="true"
+              aria-invalid={email.trim() !== '' && !emailValid}
               autoComplete="email"
               className="w-full bg-white border-2 border-brand-lightblue focus:border-brand-blue rounded-2xl px-4 py-3.5 text-sm text-brand-blue placeholder-gray-400 outline-none transition-colors"
             />
@@ -547,6 +619,7 @@ export default function BookingWizard({ initialObjective = null }: BookingWizard
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               placeholder="Votre téléphone (facultatif)"
+              aria-label="Votre téléphone (facultatif)"
               autoComplete="tel"
               className="w-full bg-white border-2 border-brand-lightblue focus:border-brand-blue rounded-2xl px-4 py-3.5 text-sm text-brand-blue placeholder-gray-400 outline-none transition-colors sm:col-span-2"
             />
@@ -554,24 +627,58 @@ export default function BookingWizard({ initialObjective = null }: BookingWizard
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               placeholder="Un mot sur votre situation ? (facultatif)"
+              aria-label="Un mot sur votre situation (facultatif)"
               rows={3}
               className="w-full bg-white border-2 border-brand-lightblue focus:border-brand-blue rounded-2xl px-4 py-3.5 text-sm text-brand-blue placeholder-gray-400 outline-none transition-colors resize-none sm:col-span-2"
+            />
+            {/* Anti-spam : champ invisible pour les humains, rempli uniquement par les robots */}
+            <input
+              type="text"
+              name="botcheck"
+              value={honeypot}
+              onChange={(e) => setHoneypot(e.target.value)}
+              tabIndex={-1}
+              autoComplete="off"
+              aria-hidden="true"
+              className="hidden"
             />
           </div>
 
           <button
             onClick={sendRequest}
-            disabled={!canSend}
+            disabled={!canSend || sending}
             className="w-full bg-brand-red hover:bg-brand-red/90 disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold text-sm px-8 py-4 rounded-2xl shadow-red hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 cursor-pointer"
           >
-            <Send className="w-4 h-4" />
-            Envoyer ma demande de rendez-vous
+            {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+            {sending ? 'Envoi en cours…' : 'Envoyer ma demande de rendez-vous'}
           </button>
+
+          {!canSend && (
+            <p className="text-center text-[11px] text-gray-500 -mt-3">
+              Indiquez votre nom et un email valide pour envoyer votre demande.
+            </p>
+          )}
+
+          {sendError && (
+            <div className="rounded-2xl border border-brand-red/30 bg-brand-red/5 p-4 text-center space-y-2 -mt-2">
+              <p className="text-xs font-semibold text-brand-red">
+                L’envoi n’a pas abouti — vérifiez votre connexion et réessayez.
+              </p>
+              <button
+                onClick={sendViaMailto}
+                className="text-xs font-bold text-brand-blue underline underline-offset-4 hover:text-brand-red transition-colors cursor-pointer"
+              >
+                Ou envoyez votre demande depuis votre messagerie
+              </button>
+            </div>
+          )}
 
           <div className="flex items-center justify-between gap-4">
             <BackButton onClick={() => setStep(3)} />
             <p className="text-[11px] text-gray-500 text-right leading-relaxed">
-              L’envoi se fait depuis votre messagerie — aucune donnée n’est transmise avant.
+              {WEB3FORMS_ACCESS_KEY
+                ? 'Vos informations ne servent qu’à organiser ce rendez-vous — rien n’est transmis avant votre clic.'
+                : 'L’envoi se fait depuis votre messagerie — aucune donnée n’est transmise avant.'}
             </p>
           </div>
         </div>
