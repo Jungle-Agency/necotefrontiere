@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://www.ncf-accompagnement.fr/sitemap.xml
+Sitemap: https://necotefrontiere.com/sitemap.xml

@@ -31,7 +31,7 @@ npm run preview  # prévisualise le build de production
   (rich snippets Google) — penser à synchroniser les deux à chaque modification.
 - **Domaine** : l'URL canonique, les balises Open Graph et
   [`public/sitemap.xml`](public/sitemap.xml) pointent vers
-  `https://www.ncf-accompagnement.fr/` — à ajuster si le domaine change.
+  `https://necotefrontiere.com/` — à ajuster si le domaine change.
 - **Mentions légales** : renseigner le numéro SIRET dans
   [`src/components/LegalModal.tsx`](src/components/LegalModal.tsx) dès réception
   de l'immatriculation (actuellement « immatriculation en cours »).
