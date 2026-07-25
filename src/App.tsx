@@ -177,7 +177,7 @@ export default function App() {
                 className="pt-1"
               >
                 <p className="text-4xl sm:text-5xl text-brand-red font-cursive font-semibold -rotate-1 select-none">
-                  Née ici, les vrais conseils de frontière.
+                  Né ici, les vrais conseils de frontière.
                 </p>
               </motion.div>
             </div>
@@ -354,8 +354,13 @@ export default function App() {
                     <p className="mt-2 text-sm text-gray-600 leading-relaxed">{pkg.description}</p>
 
                     <div className="mt-5 pt-5 border-t border-brand-lightblue/60">
-                      <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider block mb-1">Tarif unique</span>
+                      <span className={`text-[10px] font-bold uppercase tracking-wider block mb-1 ${pkg.originalPrice ? 'text-brand-red' : 'text-gray-500'}`}>
+                        {pkg.originalPrice ? 'Offre de lancement' : 'Tarif unique'}
+                      </span>
                       <div className="flex items-baseline gap-1.5">
+                        {pkg.originalPrice && (
+                          <span className="text-xl font-display font-bold text-gray-400 line-through">{pkg.originalPrice} €</span>
+                        )}
                         <span className="text-4xl font-display font-black text-brand-blue tracking-tight">{pkg.price} €</span>
                         <span className="text-[11px] text-gray-500 font-semibold">TTC</span>
                       </div>
@@ -483,7 +488,7 @@ export default function App() {
             <div className="md:col-span-5 space-y-4">
               <img
                 src="/wordmark-ncf-360.png"
-                alt="Né côté frontière — Née ici, les vrais conseils de frontière"
+                alt="Né côté frontière — Né ici, les vrais conseils de frontière"
                 loading="lazy"
                 decoding="async"
                 width={224}

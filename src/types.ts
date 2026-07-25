@@ -2,6 +2,8 @@ export interface ServicePackage {
   id: string;
   name: string;
   price: number;
+  /* Prix barré affiché à côté du prix (offre de lancement). */
+  originalPrice?: number;
   duration?: string;
   description: string;
   features: string[];

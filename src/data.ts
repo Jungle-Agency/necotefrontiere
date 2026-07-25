@@ -4,7 +4,8 @@ export const SERVICE_PACKAGES: ServicePackage[] = [
   {
     id: 'cv-boost',
     name: 'CV Boost',
-    price: 119,
+    price: 50,
+    originalPrice: 80,
     duration: '2 à 4 jours ouvrés',
     description: 'Pour ceux qui veulent un CV clair, professionnel et adapté au marché de l’emploi : personnes en recherche d’emploi, étudiants et jeunes diplômés.',
     features: [

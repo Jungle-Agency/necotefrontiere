@@ -68,7 +68,7 @@ const RECOMMENDATIONS: Record<Objective, { title: string; detail: string }> = {
       'Un premier échange gratuit pour poser votre situation, vérifier votre éligibilité et repartir avec des prochaines étapes claires.'
   },
   cv: {
-    title: 'Offre conseillée : CV Boost — dès 119 €',
+    title: 'Offre conseillée : CV Boost — dès 50 €',
     detail:
       'Refonte complète aux normes suisses, mots-clés recruteurs, lettre de motivation en option. On valide ensemble la formule pendant votre RDV découverte offert.'
   },
